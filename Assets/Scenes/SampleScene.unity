@@ -5409,7 +5409,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   url: ws://3.110.85.123:5000/socket.io/?EIO=4&transport=websocket
   autoConnect: 1
-  localConnect: 1
+  localConnect: 0
   reconnectDelay: 2
   ackExpirationTime: 1800
   pingInterval: 0.5
