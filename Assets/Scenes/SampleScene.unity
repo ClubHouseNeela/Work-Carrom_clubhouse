@@ -8949,7 +8949,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: cb23274049cf705439aa6e414a8ce770, type: 3}
   velocityThresholdForStoppingMovement: 0.05
   velocityThresholdForPieceFallInPocket: 20
-  gameMode: 2
+  gameMode: 1
   flipped: 0
   hasBot: 1
   botType: 0
