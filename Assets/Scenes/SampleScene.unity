@@ -5407,7 +5407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b55bcd7771a7c34b94538f0474ef4e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: ws://3.110.85.123:5000/socket.io/?EIO=4&transport=websocket
+  url: ws://3.109.122.170:5000/socket.io/?EIO=4&transport=websocket
   autoConnect: 1
   localConnect: 0
   reconnectDelay: 2
@@ -8949,7 +8949,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: cb23274049cf705439aa6e414a8ce770, type: 3}
   velocityThresholdForStoppingMovement: 0.05
   velocityThresholdForPieceFallInPocket: 20
-  gameMode: 1
+  gameMode: 2
   flipped: 0
   hasBot: 1
   botType: 0

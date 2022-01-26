@@ -5,7 +5,8 @@
     package="com.gamejoypro.carrom"
     xmlns:tools="http://schemas.android.com/tools">
     <application>
-        <activity android:name="com.unity3d.player.UnityPlayerActivity"
+        <activity
+		  android:name="com.unity3d.player.UnityPlayerActivity"
                   android:theme="@style/UnityThemeSelector"
                   android:exported="true">
             <intent-filter>
