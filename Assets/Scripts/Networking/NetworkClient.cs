@@ -149,11 +149,12 @@ public class NetworkClient : SocketIOComponent
         {
             // Make striker position, rotation, force same as opponent
             Debug.Log("Got opponent striker force from server " + E.data.list);
-            force.x = int.Parse(E.data["xMagnitude"].ToString());
-            force.y = int.Parse(E.data["yMagnitude"].ToString());
-            position.x = int.Parse(E.data["xPos"].ToString());
-            position.y = int.Parse(E.data["yPos"].ToString());
-            rotation = int.Parse(E.data["zRot"].ToString());
+            force.x = float.Parse(E.data["xMagnitude"].ToString());
+            force.y = float.Parse(E.data["yMagnitude"].ToString());
+            position.x = float.Parse(E.data["xPos"].ToString());
+            position.y = float.Parse(E.data["yPos"].ToString());
+            rotation = float.Parse(E.data["zRot"].ToString());
+            Debug.Log(force + "," + position);
 
             StrikerController.instance.StrikerShootFromServer(force, position, rotation);
         });
@@ -379,16 +380,16 @@ public class NetworkClient : SocketIOComponent
     public void SendStrikerShootSignal(Vector2 force, Vector2 position, float rotation)
     {
         Debug.Log("Sending player striker shoot force to server");
-        this.shootForce.xMagnitude = (force.x * 1000) / 1000;
-        this.shootForce.yMagnitude = (force.y * 1000) / 1000;
-        this.shootForce.xPos = (position.x * 1000) / 1000;  
-        this.shootForce.yPos = (position.y * 1000) / 1000;
-        this.shootForce.zRot = (rotation * 1000) / 1000;
+        this.shootForce.xMagnitude = (force.x);// * 1000) / 1000;
+        this.shootForce.yMagnitude = (force.y);// * 1000) / 1000;
+        this.shootForce.xPos = (position.x);// * 1000) / 1000;  
+        this.shootForce.yPos = (position.y);// * 1000) / 1000;
+        this.shootForce.zRot = (rotation);// * 1000) / 1000;
 
         var mag = new Vector2(this.shootForce.xMagnitude, this.shootForce.yMagnitude);
         var pos = new Vector2(this.shootForce.xPos, this.shootForce.yPos);
 
-        StrikerController.instance.StrikerShootFromServer(mag, pos, this.shootForce.zRot);
+        //StrikerController.instance.StrikerShootFromServer(mag, pos, this.shootForce.zRot);
 
         json = new JSONObject(JsonUtility.ToJson(this.shootForce));
         Emit("PlayerStrikerShoot", json);
@@ -407,9 +408,9 @@ public class NetworkClient : SocketIOComponent
         for(int i = 0; i < pos.Count;i++)
         {
             matchData.pieces.Add(new PieceInfo());
-            matchData.pieces[i].xPos = (pos[i].x * 1000) / 1000;
-            matchData.pieces[i].yPos = (pos[i].y * 1000) / 1000;
-            matchData.pieces[i].zRot = (rot[i] * 1000) / 1000;
+            matchData.pieces[i].xPos = (pos[i].x);// * 1000) / 1000;
+            matchData.pieces[i].yPos = (pos[i].y);// * 1000) / 1000;
+            matchData.pieces[i].zRot = (rot[i]);// * 1000) / 1000;
 
             vectors.Add(new Vector2(matchData.pieces[i].xPos, matchData.pieces[i].yPos));
             rotations.Add(matchData.pieces[i].zRot);
