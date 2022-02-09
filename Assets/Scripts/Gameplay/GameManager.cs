@@ -474,7 +474,7 @@ public class GameManager : MonoBehaviour
 
     public void GeneratePiecesForBlackAndWhiteMode(bool flipColour)
     {
-        PieceGenerator.instance.GeneratePieces(flipColour);
+        PieceGenerator.instance.GeneratePieces(false);
     }
 
     public void StartGameForBlackAndWhiteMode(bool coloursFlipped)
@@ -498,11 +498,11 @@ public class GameManager : MonoBehaviour
     {
         pieceColourSelectMenu.SetActive(false);
         var pieceCol = 0;
-
-        if (colour == 1)
-            pieceCol = 0;
-        else if (colour == 0)
-            pieceCol = 1;
+        colour = 1;
+        //if (colour == 1)
+        //    pieceCol = 0;
+        //else if (colour == 0)
+        //    pieceCol = 1;
 
         targetPiece.GetComponent<Image>().sprite = pieceSprites[colour];
         targetPiece.SetActive(true);
@@ -935,7 +935,7 @@ public class GameManager : MonoBehaviour
             int points = PieceReturnAnimation(player);
             yield return new WaitForSeconds(0.5f);
             ChangeScore(player, -points);
-            oneMoreChance = true;
+            //oneMoreChance = true;
         }
         EndTurn();
     }
