@@ -407,10 +407,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //pieceColourSelectMenu.SetActive(true);
+            pieceColourSelectMenu.SetActive(true);
 
-            int pick = Random.Range(0, 1);
-            PieceColourSelected(pick);
+            //int pick = Random.Range(0, 1);
+            //PieceColourSelected(pick);
         }
     }
 
@@ -474,7 +474,7 @@ public class GameManager : MonoBehaviour
 
     public void GeneratePiecesForBlackAndWhiteMode(bool flipColour)
     {
-        PieceGenerator.instance.GeneratePieces(flipColour);
+        PieceGenerator.instance.GeneratePieces(false);
     }
 
     public void StartGameForBlackAndWhiteMode(bool coloursFlipped)
@@ -497,18 +497,18 @@ public class GameManager : MonoBehaviour
     public void PieceColourSelected(int colour)
     {
         pieceColourSelectMenu.SetActive(false);
-        var pieceCol = 0;
-
-        if (colour == 1)
-            pieceCol = 0;
-        else if (colour == 0)
-            pieceCol = 1;
+        //var pieceCol = 0;
+        //colour = 1;
+        //if (colour == 1)
+        //    pieceCol = 0;
+        //else if (colour == 0)
+        //    pieceCol = 1;
 
         targetPiece.GetComponent<Image>().sprite = pieceSprites[colour];
         targetPiece.SetActive(true);
 
-        oppTargetPiece.GetComponent<Image>().sprite = pieceSprites[pieceCol];
-        oppTargetPiece.SetActive(true);
+        //oppTargetPiece.GetComponent<Image>().sprite = pieceSprites[pieceCol];
+        //oppTargetPiece.SetActive(true);
 
         pieceTargetColour = colour;
         NetworkClient.instance.SendPlayerPieceColour(colour);
@@ -935,7 +935,7 @@ public class GameManager : MonoBehaviour
             int points = PieceReturnAnimation(player);
             yield return new WaitForSeconds(0.5f);
             ChangeScore(player, -points);
-            oneMoreChance = true;
+            //oneMoreChance = true;
         }
         EndTurn();
     }
