@@ -15,6 +15,8 @@ public class NetworkClient : SocketIOComponent
 
     private StrikerInfo shootForce = new StrikerInfo();
     private MatchData matchData = new MatchData();
+    private ChatBody chatBody = new ChatBody();
+    private ChatBody chatBodyReceived = new ChatBody();
     private GameModeDetails mode = new GameModeDetails();
     private ScoresWithBot scores = new ScoresWithBot();
     private JSONObject json;
@@ -157,6 +159,16 @@ public class NetworkClient : SocketIOComponent
             Debug.Log(force + "," + position);
 
             StrikerController.instance.StrikerShootFromServer(force, position, rotation);
+        });
+
+        On("OnChat", (E) =>
+        {
+            //Receive chat msg text and sender player id
+
+            Debug.Log("Chat recieved from server " + E.data);
+
+            chatBodyReceived = JsonUtility.FromJson<ChatBody>(E.data.ToString());
+            GameManager.instance.ReceiveChatAndShow(chatBodyReceived.playerColorId, chatBodyReceived.message);
         });
 
         On("StartGame", (E) =>
@@ -480,6 +492,18 @@ public class NetworkClient : SocketIOComponent
         Emit("SendEmoji", json);
     }
 
+    public void SendChatMsg(int playerId, string msg)
+    {
+        if (!disconnected)
+        {
+            Debug.Log("Sent chat msg: " + msg);
+            chatBody.playerColorId = playerId;
+            chatBody.message = msg;
+            json = new JSONObject(JsonUtility.ToJson(chatBody));
+            Emit("OnChat", json);
+        }
+    }
+
     public void LeaveMatch()
     {
         ResetPlayerPrefs();
@@ -606,6 +630,12 @@ public class NetworkClient : SocketIOComponent
 
 #region serialized classes used to send data to and fro nodejs server via socketio
 
+[System.Serializable]
+public class ChatBody
+{
+    public int playerColorId;
+    public string message;
+}
 
 [System.Serializable]
 public class RejoinRoomInfo

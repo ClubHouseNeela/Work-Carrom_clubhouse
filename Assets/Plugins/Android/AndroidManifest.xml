@@ -11,7 +11,7 @@
                   android:exported="true">
             <intent-filter>
                 <action android:name="com.unique.as.Carrom" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
         </activity>

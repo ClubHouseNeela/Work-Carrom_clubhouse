@@ -58,7 +58,8 @@ public class GameManager : MonoBehaviour
     public bool coloursFlipped;
 
 
-
+    [SerializeField] private GameObject P1Chat;
+    [SerializeField] private GameObject P2Chat;
     [SerializeField] private List<PieceScript> piecesOnBoard = new List<PieceScript>();
     [SerializeField] private int numberOfMovingPieces;
     [SerializeField] private bool turn;
@@ -98,6 +99,13 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        if (AndroidtoUnityJSON.instance.game_mode == "FREESTYLE")
+            gameMode = CommonValues.GameMode.FREESTYLE;
+        else if (AndroidtoUnityJSON.instance.game_mode == "PROFESSIONAL")
+            gameMode = CommonValues.GameMode.BLACK_AND_WHITE;
+
+        Debug.Log("Game mode: " + gameMode);
+
         Shader.WarmupAllShaders();
 
         instance = this;
@@ -409,8 +417,8 @@ public class GameManager : MonoBehaviour
         {
             //pieceColourSelectMenu.SetActive(true);
 
-            int pick = Random.Range(0, 1);
-            PieceColourSelected(pick);
+            //int pick = Random.Range(0, 1);
+            PieceColourSelected(playerNumberOnline);
         }
     }
 
@@ -498,11 +506,11 @@ public class GameManager : MonoBehaviour
     {
         pieceColourSelectMenu.SetActive(false);
         var pieceCol = 0;
-        colour = 1;
-        //if (colour == 1)
-        //    pieceCol = 0;
-        //else if (colour == 0)
-        //    pieceCol = 1;
+        //colour = 1;
+        if (colour == 1)
+            pieceCol = 0;
+        else if (colour == 0)
+            pieceCol = 1;
 
         targetPiece.GetComponent<Image>().sprite = pieceSprites[colour];
         targetPiece.SetActive(true);
@@ -1147,6 +1155,87 @@ public class GameManager : MonoBehaviour
 
     //------------------------------------------------------------------------------------------------------------------------------------------
 
+    #region chat 
+
+    public void ChatType(int type)
+    {
+        string msg = "";
+
+        switch (type)
+        {
+            case 1:
+                msg = "Awesome!";
+                break;
+
+            case 2:
+                msg = "Nice Shot";
+                break;
+
+            case 3:
+                msg = "You are good";
+                break;
+
+            case 4:
+                msg = "Take your time";
+                break;
+
+            case 5:
+                msg = "Victory is mine";
+                break;
+
+            case 6:
+                msg = "OMG";
+                break;
+
+            case 7:
+                msg = "LOL";
+                break;
+        }
+
+        OnSendChat(msg);
+    }
+
+    public void OnSendChat(string msg)
+    {
+        //INPUTFIELD
+        //if(Inputfield.text.Length > 0)
+        //{
+        //    NetworkClient.instance.SendChatMsg((int)playerColour, Inputfield.text);
+        //    StartCoroutine(ChatDisplay((int)playerColour, Inputfield.text));
+        //    Inputfield.text = "";
+        //}
+
+        //PRESET
+        NetworkClient.instance.SendChatMsg((int)playerNumberOnline, msg);
+        StartCoroutine(ChatDisplay((int)playerNumberOnline, msg));
+    }
+
+    public void ReceiveChatAndShow(int playerId, string msg)
+    {
+        StartCoroutine(ChatDisplay(playerId, msg));
+    }
+
+    IEnumerator ChatDisplay(int id, string msg)
+    {
+        GameObject bubble = null;
+
+        if (playerNumberOnline == 0)
+            bubble = P1Chat;
+        else
+            bubble = P2Chat;
+
+        if (bubble != null)
+        {
+            bubble.transform.GetChild(0).GetComponent<Text>().text = msg;
+            bubble.SetActive(true);
+            yield return new WaitForSeconds(5.0f);
+            bubble.SetActive(false);
+        }
+    }
+
+    #endregion
+
+    //------------------------------------------------------------------------------------------------------------------------------------------
     private void OnDestroy()
     {
         PieceScript.pieceIsMoving -= SetMovingPieces;
