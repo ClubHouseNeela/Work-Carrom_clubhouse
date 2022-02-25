@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject P1Chat;
     [SerializeField] private GameObject P2Chat;
+    [SerializeField] private GameObject LeaderboardScreen;
     [SerializeField] private List<PieceScript> piecesOnBoard = new List<PieceScript>();
     [SerializeField] private int numberOfMovingPieces;
     [SerializeField] private bool turn;
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour
     private List<Vector2> piecePos = new List<Vector2>();
     private List<float> pieceRot = new List<float>();
     private bool oneMoreChance;
+    private bool isLocalPlayerWon;
     private bool redPieceFallenWithoutAdditionalPiece = false;
     private bool strikerInPocket = false;
     private bool queenHasFallen = false;
@@ -99,9 +101,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (AndroidtoUnityJSON.instance.game_mode == "FREESTYLE")
+        if (AndroidtoUnityJSON.instance.game_mode == "freestyle")
             gameMode = CommonValues.GameMode.FREESTYLE;
-        else if (AndroidtoUnityJSON.instance.game_mode == "PROFESSIONAL")
+        else if (AndroidtoUnityJSON.instance.game_mode == "pro")
             gameMode = CommonValues.GameMode.BLACK_AND_WHITE;
 
         Debug.Log("Game mode: " + gameMode);
@@ -449,8 +451,19 @@ public class GameManager : MonoBehaviour
             int colour = (PlayerPrefs.GetInt(CommonValues.PlayerPrefKeys.PLAYER_COLOUR, 0));
             pieceColourSelectMenu.SetActive(false);
 
+            var pieceCol = 0;
+
+            if (colour == 1)
+                pieceCol = 0;
+            else if (colour == 0)
+                pieceCol = 1;
+
             targetPiece.GetComponent<Image>().sprite = pieceSprites[colour];
             targetPiece.SetActive(true);
+
+            oppTargetPiece.GetComponent<Image>().sprite = pieceSprites[pieceCol];
+            oppTargetPiece.SetActive(true);
+
             pieceTargetColour = colour;
             this.coloursFlipped = PlayerPrefs.GetInt(CommonValues.PlayerPrefKeys.COLOURS_FLIPPED, -1) == 1;
             GeneratePiecesForBlackAndWhiteMode(coloursFlipped);
@@ -505,8 +518,9 @@ public class GameManager : MonoBehaviour
     public void PieceColourSelected(int colour)
     {
         pieceColourSelectMenu.SetActive(false);
+
         var pieceCol = 0;
-        //colour = 1;
+        
         if (colour == 1)
             pieceCol = 0;
         else if (colour == 0)
@@ -627,7 +641,7 @@ public class GameManager : MonoBehaviour
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                 AudioManager.instance.Play("Win");
                 NetworkClient.instance.SendPlayerWin();
-                GameOver();
+                GameOver(true);
                 return true;
             }
             else if (p2Score >= maxPointsFreestyleMode)
@@ -638,7 +652,7 @@ public class GameManager : MonoBehaviour
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
                 NetworkClient.instance.SendPlayerLose();
-                GameOver();
+                GameOver(false);
                 return true; ;
             }
             else if (piecesFallen == 19)
@@ -649,7 +663,7 @@ public class GameManager : MonoBehaviour
                     AudioManager.instance.Play("Lose");
                     gameEndText.text = "DRAW";
                     NetworkClient.instance.SendPlayerDraw();
-                    GameOver();
+                    GameOver(false);
                     return true; ;
                 }
                 else if (p1Score > p2Score)
@@ -660,7 +674,7 @@ public class GameManager : MonoBehaviour
                     gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                     AudioManager.instance.Play("Win");
                     NetworkClient.instance.SendPlayerWin();
-                    GameOver();
+                    GameOver(true);
                     return true; ;
                 }
                 else
@@ -671,7 +685,7 @@ public class GameManager : MonoBehaviour
                     gameEndText.text = "";
                     gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
                     NetworkClient.instance.SendPlayerLose();
-                    GameOver();
+                    GameOver(true);
                     return true; ;
                 }
             }
@@ -684,7 +698,7 @@ public class GameManager : MonoBehaviour
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
                 AudioManager.instance.Play("Lose");
-                GameOver();
+                GameOver(false);
                 return true;
             }
             
@@ -695,7 +709,7 @@ public class GameManager : MonoBehaviour
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                 AudioManager.instance.Play("Win");
                 NetworkClient.instance.SendPlayerWin();
-                GameOver();
+                GameOver(true);
                 return true;
             }
 
@@ -706,7 +720,7 @@ public class GameManager : MonoBehaviour
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                 AudioManager.instance.Play("Win");
                 NetworkClient.instance.SendPlayerWin();
-                GameOver();
+                GameOver(true);
                 return true;
             }
             else if(p2Score >= 9)
@@ -715,14 +729,14 @@ public class GameManager : MonoBehaviour
                 AudioManager.instance.Play("Lose");
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
-                GameOver();
+                GameOver(false);
                 return true;
             }
         }
         return false;
     }
 
-    public void GameOver()
+    public void GameOver(bool isWon)
     {
         gameOver = true;
         gameStarted = false;
@@ -746,6 +760,10 @@ public class GameManager : MonoBehaviour
         {
             //Time.timeScale = 0f;
         }
+
+        LeaderboardScreen.SetActive(true);
+
+        LeaderboardUIManager.instance.SetLeaderboardData(isWon);
     }
     private IEnumerator GameOverPause()
     {
@@ -759,7 +777,7 @@ public class GameManager : MonoBehaviour
         {
             AudioManager.instance.Play("Win");
             gameEndText.text = "You win";
-            GameOver();
+            GameOver(true);
         }
     }
 

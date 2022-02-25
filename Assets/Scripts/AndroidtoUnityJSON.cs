@@ -19,6 +19,7 @@ public class AndroidtoUnityJSON: MonoBehaviour
     public string battle_id;
     public string game_id;
     public string game_mode;
+    public string multiplayer_game_mode;
 
     private void Awake()
     {
@@ -31,7 +32,8 @@ public class AndroidtoUnityJSON: MonoBehaviour
         user_name = "John Doe";
         battle_id = "32";
         game_id = "32";
-        game_mode = "PROFESSIONAL";
+        game_mode = "battle";
+        multiplayer_game_mode = "pro";
 #endif
 
         getIntentData();
@@ -74,10 +76,11 @@ public class AndroidtoUnityJSON: MonoBehaviour
             token = GetProperty(extras, "token");
             user_name = GetProperty(extras, "user_name");
             game_id = GetProperty(extras, "game_id");
-            //battle_id = GetProperty(extras, "battle_id");
-            profile_image = GetProperty(extras, "profile_image");
-            game_fee = GetProperty(extras, "game_fee");
+            battle_id = GetProperty(extras, "battle_id");
+            profile_image = GetProperty(extras, "game_fee");
+            game_fee = GetProperty(extras, "wallet_amount");
             game_mode = GetProperty(extras, "game_mode");
+            multiplayer_game_mode = GetProperty(extras, "multiplayer_game_mode");
 
             data.text = "";            
 

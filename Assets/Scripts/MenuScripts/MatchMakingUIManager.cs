@@ -17,7 +17,7 @@ public class MatchMakingUIManager : MonoBehaviour
     [SerializeField] private Image
     playerImage, opponentImage, loadingIconImage, loadingCircleImage;
 
-    [SerializeField] private RTLTextMeshPro
+    [SerializeField] public RTLTextMeshPro
     playerMobileNumberText, opponentMobileNumberText;
 
     private Color[] colourList = new Color[] { Color.cyan, Color.red, Color.magenta, Color.yellow, Color.green, Color.blue, Color.gray, Color.white };
@@ -68,7 +68,7 @@ public class MatchMakingUIManager : MonoBehaviour
                 opponentID += glyphs[Random.Range(0, glyphs.Length)];
             }
             PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER, opponentID);
-            playerMobileNumberText.text = playerID;
+            playerMobileNumberText.text = AndroidtoUnityJSON.instance.user_name;//playerID;
             StartCoroutine(OpponentMobileNumberSearchCoroutine());
         }
     }
