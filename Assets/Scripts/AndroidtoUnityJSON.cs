@@ -23,6 +23,8 @@ public class AndroidtoUnityJSON: MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
+
 #if (UNITY_EDITOR)
 
         player_id = "32323";
@@ -33,12 +35,10 @@ public class AndroidtoUnityJSON: MonoBehaviour
         battle_id = "32";
         game_id = "32";
         game_mode = "battle";
-        multiplayer_game_mode = "pro";
+        multiplayer_game_mode = "freestyle";
 #endif
 
         getIntentData();
-
-        instance = this;
     }
 
     private bool getIntentData()

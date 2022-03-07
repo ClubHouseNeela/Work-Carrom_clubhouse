@@ -40,6 +40,8 @@ public class MatchMakingUIManager : MonoBehaviour
 
     private void Start()
     {
+        WebRequestHandler.Instance.DownloadSprite(AndroidtoUnityJSON.instance.profile_image, (sprite) => { playerImage.sprite = sprite; });
+
         if (GameManager.instance.gameMode == CommonValues.GameMode.LOCAL_MULTIPLAYER)
         {
             StartCoroutine(FakePause(Random.Range(3, 6)));

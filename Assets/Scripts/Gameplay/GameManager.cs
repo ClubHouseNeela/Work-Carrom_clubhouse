@@ -101,9 +101,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (AndroidtoUnityJSON.instance.game_mode == "freestyle")
+        if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "freestyle")
             gameMode = CommonValues.GameMode.FREESTYLE;
-        else if (AndroidtoUnityJSON.instance.game_mode == "pro")
+        else if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
             gameMode = CommonValues.GameMode.BLACK_AND_WHITE;
 
         Debug.Log("Game mode: " + gameMode);
