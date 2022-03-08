@@ -4,10 +4,15 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-public class AndroidtoUnityJSON: MonoBehaviour
+public class AndroidtoUnityJSON : MonoBehaviour
 {
     public static AndroidtoUnityJSON instance;
+
+    public bool isTest = false;
+    public bool isFirst = true;
 
     public Text data;
 
@@ -25,20 +30,23 @@ public class AndroidtoUnityJSON: MonoBehaviour
     {
         instance = this;
 
-#if (UNITY_EDITOR)
+        if (isTest)
+        {
+            player_id = "32323";
+            token = "l9452bgQ3jYbKgXwnReONMvaK";
+            game_fee = "20";
+            profile_image = "https://picsum.photos/400";
+            user_name = "John Doe";
+            battle_id = "32";
+            game_id = "32";
+            game_mode = "normal";
+            multiplayer_game_mode = "pro";
+        }
+        else
+        {
+            getIntentData();
+        }
 
-        player_id = "32323";
-        token = "l9452bgQ3jYbKgXwnReONMvaK";
-        game_fee = "20";
-        profile_image = "https://picsum.photos/400";
-        user_name = "John Doe";
-        battle_id = "32";
-        game_id = "32";
-        game_mode = "battle";
-        multiplayer_game_mode = "freestyle";
-#endif
-
-        getIntentData();
     }
 
     private bool getIntentData()
@@ -68,8 +76,6 @@ public class AndroidtoUnityJSON: MonoBehaviour
             //    "wallet_amount": '333'
             //}
 
-            string jsonString = GetProperty(extras, "data");
-            
             data.text = "Base app data error!";
 
             player_id = GetProperty(extras, "player_id");
@@ -77,12 +83,11 @@ public class AndroidtoUnityJSON: MonoBehaviour
             user_name = GetProperty(extras, "user_name");
             game_id = GetProperty(extras, "game_id");
             battle_id = GetProperty(extras, "battle_id");
-            profile_image = GetProperty(extras, "game_fee");
-            game_fee = GetProperty(extras, "wallet_amount");
+            profile_image = GetProperty(extras, "profile_image");
+            game_fee = GetProperty(extras, "game_fee");
             game_mode = GetProperty(extras, "game_mode");
-            multiplayer_game_mode = GetProperty(extras, "multiplayer_game_mode");
 
-            data.text = "";            
+            data.text = "";
 
             return true;
         }

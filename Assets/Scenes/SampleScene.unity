@@ -5503,15 +5503,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03707ae10b5073b45976177ed0817c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTest: 0
+  isFirst: 1
   data: {fileID: 0}
-  player_id: 32323
+  player_id: 228
   token: l9452bgQ3jYbKgXwnReONMvaK
   game_fee: 20
   profile_image: https://picsum.photos/400
   user_name: John Doe
-  battle_id: 32
-  game_id: 32
-  game_mode: battle
+  battle_id: 26
+  game_id: 28
+  game_mode: BATTLE
   multiplayer_game_mode: freestyle
 --- !u!114 &1109313449
 MonoBehaviour:
@@ -9210,6 +9212,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03707ae10b5073b45976177ed0817c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTest: 0
+  isFirst: 1
   data: {fileID: 0}
   player_id: 
   token: 
