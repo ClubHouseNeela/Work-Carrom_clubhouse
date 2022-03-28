@@ -11,20 +11,23 @@ public class MatchMakingUIManager : MonoBehaviour
 
     public static MatchMakingUIManager instance;
 
-    [SerializeField] private string
+    [SerializeField] public string
     playerID, opponentID;
 
     [SerializeField] private Image
-    playerImage, opponentImage, loadingIconImage, loadingCircleImage;
+    playerImage, opponentImage, loadingIconImage, loadingCircleImage, playerGameImg, oppgameImg;
 
     [SerializeField] public RTLTextMeshPro
-    playerMobileNumberText, opponentMobileNumberText;
+    playerMobileNumberText, opponentMobileNumberText, PlayerGameName, OpponentGameName;
 
     private Color[] colourList = new Color[] { Color.cyan, Color.red, Color.magenta, Color.yellow, Color.green, Color.blue, Color.gray, Color.white };
 
     private Sequence loadingIconSequence;
 
     private const string glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    public string getTournAttemptURL = "https://admin.gamejoypro.com/api/getattempts";
+    public WallUpdate walletUpdate;
 
     #endregion
 
@@ -40,8 +43,6 @@ public class MatchMakingUIManager : MonoBehaviour
 
     private void Start()
     {
-        WebRequestHandler.Instance.DownloadSprite(AndroidtoUnityJSON.instance.profile_image, (sprite) => { playerImage.sprite = sprite; });
-
         if (GameManager.instance.gameMode == CommonValues.GameMode.LOCAL_MULTIPLAYER)
         {
             StartCoroutine(FakePause(Random.Range(3, 6)));
@@ -71,6 +72,12 @@ public class MatchMakingUIManager : MonoBehaviour
             }
             PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER, opponentID);
             playerMobileNumberText.text = AndroidtoUnityJSON.instance.user_name;//playerID;
+            PlayerGameName.text = AndroidtoUnityJSON.instance.user_name;//playerID;
+            WebRequestHandler.Instance.DownloadSprite(AndroidtoUnityJSON.instance.profile_image, (sprite) =>
+            {
+                playerImage.sprite = sprite;
+                playerGameImg.sprite = sprite;
+            });
             StartCoroutine(OpponentMobileNumberSearchCoroutine());
         }
     }
@@ -134,7 +141,80 @@ public class MatchMakingUIManager : MonoBehaviour
     {
         StopAllCoroutines();
         opponentMobileNumberText.text = opponentID;
+
+        if (NetworkClient.instance.matchDetails.playerId[1] != 0)
+        {
+            OpponentGameName.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+            opponentMobileNumberText.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+            WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[GameManager.instance.playerNumberOnline], (sprite) =>
+            {
+                oppgameImg.sprite = sprite;
+                opponentImage.sprite = sprite;
+            });
+        }
+        else
+        {
+            //if bot
+            OpponentGameName.text = NetworkClient.instance.oppPlayerName;
+            opponentMobileNumberText.text = NetworkClient.instance.oppPlayerName;
+            WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.oppPlayerDp, (sprite) => 
+            { 
+                oppgameImg.sprite = sprite;
+                opponentImage.sprite = sprite;
+            });
+        }
+
         opponentMobileNumberText.rectTransform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutQuart);
+
+        var attemptNo = GameManager.instance.attemptNo;
+        //attempt check
+        WebRequestHandler.Instance.Get(getTournAttemptURL + "/" + AndroidtoUnityJSON.instance.tour_id, (response, status) =>
+        {
+            GetAttempt attempt = JsonUtility.FromJson<GetAttempt>(response);
+
+            Debug.Log("Attempt(s) remaining: " + attempt.data.remainAttemp);
+
+            attemptNo = int.Parse(attempt.data.remainAttemp);
+            GameManager.instance.attemptNo = attemptNo;
+
+            if (attempt.data.remainAttemp == AndroidtoUnityJSON.instance.no_of_attempts)
+            {
+                AndroidtoUnityJSON.instance.isFirst = true;
+            }
+            else
+            {
+                AndroidtoUnityJSON.instance.isFirst = false;
+            }
+        });
+
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
+        {
+            if (AndroidtoUnityJSON.instance.entry_type == "re entry" && AndroidtoUnityJSON.instance.isFirst ||
+                AndroidtoUnityJSON.instance.entry_type == "re entry paid" || AndroidtoUnityJSON.instance.entry_type == "single entry")
+            {
+                DeductWallet();
+            }
+        }
+        else
+        {
+            DeductWallet();
+        }
+    }
+
+    public void DeductWallet()
+    {
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
+            walletUpdate.game_id = AndroidtoUnityJSON.instance.tour_id;
+        else if (AndroidtoUnityJSON.instance.game_mode == "battle")
+            walletUpdate.game_id = AndroidtoUnityJSON.instance.battle_id;
+
+        walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
+        walletUpdate.type = AndroidtoUnityJSON.instance.game_mode;
+        string mydata = JsonUtility.ToJson(walletUpdate);
+        WebRequestHandler.Instance.Post(GameManager.instance.walletUpdateURL, mydata, (response, status) =>
+        {
+            Debug.Log(response + " sent wallet update");
+        });
     }
 
     public void GameStart()

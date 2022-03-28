@@ -1,12 +1,12 @@
 {
-    "m_SelectedDeviceId": "ZD22226XHP",
+    "m_SelectedDeviceId": "LFCYMNDIMB8TX489",
     "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "LFCYMNDIMB8TX489",
+        "name": "com.gamejoypro.carrom",
+        "processId": 21452,
         "exited": false
     },
-    "m_SelectedPriority": 0,
+    "m_SelectedPriority": 1,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "52001141f04574d3",
@@ -40,27 +40,69 @@
         },
         {
             "deviceId": "ZD22226XHP",
-            "name": "com.motorola.launcher3",
-            "processId": 25318,
+            "name": "com.gamejoypro.games",
+            "processId": 27830,
             "exited": false
         },
         {
             "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom.freestyle",
-            "processId": 7365,
+            "name": "com.gamejoypro.carrom",
+            "processId": 31412,
             "exited": true
         },
         {
             "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom.freestyle",
-            "processId": 7614,
+            "name": "com.gamejoypro.carrom",
+            "processId": 1766,
             "exited": true
         },
         {
             "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom.freestyle",
-            "processId": 8351,
+            "name": "com.gamejoypro.carrom",
+            "processId": 2229,
             "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 2489,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 2986,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 3550,
+            "exited": false
+        },
+        {
+            "deviceId": "LFCYMNDIMB8TX489",
+            "name": "com.android.launcher3",
+            "processId": 26729,
+            "exited": false
+        },
+        {
+            "deviceId": "LFCYMNDIMB8TX489",
+            "name": "com.gamejoypro.carrom",
+            "processId": 20425,
+            "exited": true
+        },
+        {
+            "deviceId": "LFCYMNDIMB8TX489",
+            "name": "com.gamejoypro.carrom",
+            "processId": 21163,
+            "exited": true
+        },
+        {
+            "deviceId": "LFCYMNDIMB8TX489",
+            "name": "com.gamejoypro.carrom",
+            "processId": 21452,
+            "exited": false
         }
     ],
     "m_Tags": {
@@ -71,7 +113,7 @@
             },
             {
                 "m_Name": "No Filter",
-                "m_Selected": true
+                "m_Selected": false
             },
             {
                 "m_Name": "",
@@ -87,7 +129,7 @@
             },
             {
                 "m_Name": "Unity",
-                "m_Selected": false
+                "m_Selected": true
             },
             {
                 "m_Name": "CRASH",
@@ -113,7 +155,7 @@
         "MemoryGroup": 2,
         "Behavior": 0
     },
-    "m_Filter": "",
+    "m_Filter": " ",
     "m_FilterIsRegularExpression": false,
     "m_SymbolPaths": []
 }

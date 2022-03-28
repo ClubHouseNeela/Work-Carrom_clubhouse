@@ -12,12 +12,12 @@ public class MenuManager : MonoBehaviour
     public static MenuManager instance;
 
     [SerializeField] private Button
-    optionsButton, soundMuteButton, quitButton, chatButton, soundOptionsButton;
+    optionsButton, soundMuteButton, quitButton, chatButton, soundOptionsButton, chatEnabledButton;
 
     [SerializeField] private GameObject
     raycastBlocker, loadingScreenObject;
 
-    [SerializeField] private RectTransform
+    [SerializeField] public RectTransform
     leaveGamePopUp, optionsPopUp, loadingScreenIcon1, loadingScreenIcon2, chatPopUp;
 
     [SerializeField] private Image
@@ -27,7 +27,7 @@ public class MenuManager : MonoBehaviour
     playerNameText, opponentNameText, loadingScreenText;
 
     [SerializeField] private Sprite[]
-    soundButtonSprites;
+    soundButtonSprites, chatEnabledSprites;
 
     [SerializeField] private Button[]
     emojis;
@@ -106,6 +106,13 @@ public class MenuManager : MonoBehaviour
             AudioManager.instance.Play("ButtonClick1");
             AudioManager.instance.Mute = !AudioManager.instance.Mute;
             soundMuteButton.image.sprite = soundButtonSprites[AudioManager.instance.Mute ? 1 : 0];
+        });
+
+        chatEnabledButton.onClick.AddListener(() =>
+        {
+            GameManager.instance.isChatEnabled = !GameManager.instance.isChatEnabled;
+            optionsPopUp.gameObject.SetActive(false);
+            chatEnabledButton.image.sprite = chatEnabledSprites[GameManager.instance.isChatEnabled ? 0 : 1];
         });
 
         loadingScreenAnimations = DOTween.Sequence();

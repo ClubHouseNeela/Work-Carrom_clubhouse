@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
-
+using System.Linq;
 
 public class NetworkClient : SocketIOComponent
 {
@@ -11,7 +11,6 @@ public class NetworkClient : SocketIOComponent
     public static NetworkClient instance;
     public RejoinRoomInfo rejoinRoom = new RejoinRoomInfo();
     public MatchStartDetails matchDetails = new MatchStartDetails();
-
 
     private StrikerInfo shootForce = new StrikerInfo();
     private MatchData matchData = new MatchData();
@@ -30,9 +29,17 @@ public class NetworkClient : SocketIOComponent
     private bool reconnecting = false;
     private bool disconnected = true;
     private bool gamePaused = false;
-    private string roomID;
+    public string roomID;
     private WaitForSecondsRealtime oneSec = new WaitForSecondsRealtime(1f);
     private bool isLeft = false;
+
+    public string botListURL = "https://admin.gamejoypro.com/api/botlist";
+    public BotList botList;
+    public List<int> botDetailsList = new List<int>();
+
+    public int oppPlayerId;
+    public string oppPlayerName;
+    public string oppPlayerDp;
 
     #endregion
 
@@ -51,6 +58,30 @@ public class NetworkClient : SocketIOComponent
     }
     public override void Start()
     {
+        Debug.Log("android data => " +
+            AndroidtoUnityJSON.instance.player_id + ", " + AndroidtoUnityJSON.instance.token + ", " + AndroidtoUnityJSON.instance.user_name + ", " +
+            AndroidtoUnityJSON.instance.game_id + ", " + AndroidtoUnityJSON.instance.profile_image + ", " + AndroidtoUnityJSON.instance.game_fee + ", " +
+            AndroidtoUnityJSON.instance.game_mode + ", " + AndroidtoUnityJSON.instance.battle_id + ", " + AndroidtoUnityJSON.instance.tour_id + ", " +
+            AndroidtoUnityJSON.instance.tour_mode + ", " + AndroidtoUnityJSON.instance.tour_name + ", " + AndroidtoUnityJSON.instance.no_of_attempts + ", " +
+            AndroidtoUnityJSON.instance.mm_player + ", " + AndroidtoUnityJSON.instance.entry_type + ", " + AndroidtoUnityJSON.instance.multiplayer_game_mode);
+
+        WebRequestHandler.Instance.Get(botListURL, (response, status) =>
+        {
+            botList = JsonUtility.FromJson<BotList>(response);
+
+            for (int z = 0; z < botList.data.Length; z++)
+                botDetailsList.Add(z);
+
+            System.Random random = new System.Random();
+            botList.data = botList.data.OrderBy(x => random.Next()).ToArray();
+
+            Debug.Log("Bot data recvd");            
+
+            oppPlayerId = int.Parse(botList.data[0].id);
+            oppPlayerName = botList.data[0].first_name;
+            oppPlayerDp = botList.data[0].image;
+        });
+
         if (GameManager.instance.gameMode != CommonValues.GameMode.PRACTICE && GameManager.instance.gameMode != CommonValues.GameMode.LOCAL_MULTIPLAYER)
         {
             // Check if game quit or disconnected abruptly last time, in that case rejoin previous room
@@ -88,7 +119,6 @@ public class NetworkClient : SocketIOComponent
                 }
             }
 
-            
             base.Start();
             SetupEvents();
         }
@@ -123,6 +153,9 @@ public class NetworkClient : SocketIOComponent
                 mode.Mode = (int)GameManager.instance.gameMode - 1;
                 mode.Bot = GameManager.instance.hasBot;
                 mode.BotType = (int)GameManager.instance.botType;
+                mode.playerDp = AndroidtoUnityJSON.instance.profile_image;
+                mode.playerName = AndroidtoUnityJSON.instance.user_name;
+                mode.playerId = int.Parse(AndroidtoUnityJSON.instance.player_id);
                 json = new JSONObject(JsonUtility.ToJson(this.mode));
                 Emit("JoinRoom", json);
             }
@@ -175,6 +208,7 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("Server signal to start game " + E.data);
 
+            matchDetails = JsonUtility.FromJson<MatchStartDetails>(E.data.ToString());
             matchDetails.firstTurn = bool.Parse(E.data["turn"].ToString());
             matchDetails.initialStart = bool.Parse(E.data["initialStart"].ToString());
             matchDetails.randomSeed = byte.Parse(E.data["randomSeed"].ToString());
@@ -255,7 +289,7 @@ public class NetworkClient : SocketIOComponent
             pieceRot.Clear();
             List<bool> _piecesEnabled = new List<bool>();
             List<Vector2> _lastPocketPos = new List<Vector2>();
-            for(int i = 0; i < E.data.list[0].Count; i++)
+            for (int i = 0; i < E.data.list[0].Count; i++)
             {
                 piecePos.Add(new Vector2(float.Parse(E.data.list[0].list[i][0].ToString()), float.Parse(E.data.list[0].list[i][1].ToString())));
                 pieceRot.Add(float.Parse(E.data.list[0].list[i][2].ToString()));
@@ -265,7 +299,7 @@ public class NetworkClient : SocketIOComponent
             matchData.numPiecesFallen = byte.Parse(E.data.list[2].ToString());
             matchData.redPieceFallenWithoutAdditionalPieces = bool.Parse(E.data.list[6].ToString());
             matchData.playerNumber = bool.Parse(E.data.list[4].ToString());
-            if( (matchData.playerNumber && GameManager.instance.playerNumberOnline == 0) || (!matchData.playerNumber && GameManager.instance.playerNumberOnline == 1))
+            if ((matchData.playerNumber && GameManager.instance.playerNumberOnline == 0) || (!matchData.playerNumber && GameManager.instance.playerNumberOnline == 1))
             {
                 matchData.lastPiecesFallen[0] = byte.Parse(E.data.list[3].list[0].ToString());
                 matchData.lastPiecesFallen[1] = byte.Parse(E.data.list[3].list[1].ToString());
@@ -276,13 +310,13 @@ public class NetworkClient : SocketIOComponent
                 matchData.lastPiecesFallen[1] = byte.Parse(E.data.list[3].list[0].ToString());
             }
 
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 matchData.lastPocketPos[i].xPos = float.Parse(E.data.list[5].list[i][0].ToString());
                 matchData.lastPocketPos[i].yPos = float.Parse(E.data.list[5].list[i][1].ToString());
                 _lastPocketPos.Add(new Vector2(matchData.lastPocketPos[i].xPos, matchData.lastPocketPos[i].yPos));
             }
-            GameManager.instance.SetMatchData(piecePos,pieceRot,matchData.queenHasFallen,matchData.numPiecesFallen, _piecesEnabled.ToArray(), matchData.lastPiecesFallen, _lastPocketPos.ToArray(), matchData.redPieceFallenWithoutAdditionalPieces);
+            GameManager.instance.SetMatchData(piecePos, pieceRot, matchData.queenHasFallen, matchData.numPiecesFallen, _piecesEnabled.ToArray(), matchData.lastPiecesFallen, _lastPocketPos.ToArray(), matchData.redPieceFallenWithoutAdditionalPieces);
         });
 
         On("PlayerDisconnected", (E) =>
@@ -364,6 +398,9 @@ public class NetworkClient : SocketIOComponent
             Debug.Log("Trying to rejoin previous room...");
             rejoinRoom.roomID = matchDetails.roomID;
             rejoinRoom.Mode = (int)GameManager.instance.gameMode - 1;
+            //rejoinRoom.playerId = int.Parse(AndroidtoUnityJSON.instance.player_id);
+            //rejoinRoom.playerName = AndroidtoUnityJSON.instance.user_name;
+            //rejoinRoom.playerDP = AndroidtoUnityJSON.instance.profile_image;
             json = new JSONObject(JsonUtility.ToJson(this.rejoinRoom));
             Emit("RejoinRoom", json);
         }
@@ -600,6 +637,7 @@ public class NetworkClient : SocketIOComponent
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.PLAYER_NUMBER, (int)GameManager.instance.playerNumberOnline);
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.COLOURS_FLIPPED, GameManager.instance.coloursFlipped? 1:0);
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.HAS_BOT, GameManager.instance.hasBot ? 1 : 0);
+            //PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER,MatchMakingUIManager.instance.opponentID );
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.RANDOM_SEED, matchDetails.randomSeed);
         }
         else
@@ -644,6 +682,9 @@ public class RejoinRoomInfo
     public int Mode;
     public int playerColour;
     public int playerNumber;
+    public int playerId;
+    public string playerName;
+    public string playerDP;
 }
 
 [System.Serializable]
@@ -691,6 +732,9 @@ public class GameModeDetails
     public int Mode;
     public bool Bot;
     public int BotType;
+    public int playerId;
+    public string playerName;
+    public string playerDp;
 }
 
 [System.Serializable]
@@ -700,6 +744,9 @@ public class MatchStartDetails
     public bool initialStart;
     public byte randomSeed;
     public string roomID;
+    public int[] playerId;
+    public string[] playerName;
+    public string[] playerDp;
 }
 
 [System.Serializable]

@@ -72,6 +72,6 @@ public class PieceGenerator : MonoBehaviour
 
         GameManager.instance.SetPiecesOnBoard(piecesOnBoard);
 
-        piecesOnBoardParent.transform.position = new Vector3(piecesOnBoardParent.transform.position.x, piecesOnBoardParent.transform.position.y + -0.067f, piecesOnBoardParent.transform.position.z);
+        //piecesOnBoardParent.transform.position = new Vector3(piecesOnBoardParent.transform.position.x, piecesOnBoardParent.transform.position.y + -0.067f, piecesOnBoardParent.transform.position.z);
     }
 }

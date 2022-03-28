@@ -12,6 +12,12 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public static event System.Action<bool> setKinematicForPieces = delegate { };
 
+    //public string serverURL = "ws://3.7.19.73:5000/socket.io/?EIO=4&transport=websocket";
+    public string sendDataURL = "http://52.66.182.199/api/gameplay";
+    public string walletInfoURL = "http://52.66.182.199/api/wallet";
+    public string walletUpdateURL = "http://52.66.182.199/api/walletdeduction";
+    public string getTournAttemptURL = "https://admin.gamejoypro.com/api/getattempts";
+
 
     // Logs
     public LogInfo logs = new LogInfo();
@@ -55,11 +61,14 @@ public class GameManager : MonoBehaviour
     public int playerNumberOnline;
     public bool gameStarted = false;
     public bool gameOver = false;
+    public bool isChatEnabled;
     public bool coloursFlipped;
+    public int attemptNo = 0;
 
 
     [SerializeField] private GameObject P1Chat;
     [SerializeField] private GameObject P2Chat;
+    [SerializeField] private GameObject WarningMessage;
     [SerializeField] private GameObject LeaderboardScreen;
     [SerializeField] private List<PieceScript> piecesOnBoard = new List<PieceScript>();
     [SerializeField] private int numberOfMovingPieces;
@@ -90,6 +99,39 @@ public class GameManager : MonoBehaviour
     private ContactFilter2D contactFilter = new ContactFilter2D();
 
 
+    public NetworkingPlayer thisPlayer;
+    private NetworkingPlayer otherPlayer;
+    public SendData sendThisPlayerData;
+    public WinningDetails winning_details;
+    public WalletInfo walletInfo;
+    public WallUpdate walletUpdate;
+    public bool foundOtherPlayer = false;
+    public bool canStartGame;
+    public string sendWinningDetailsData;
+    public string sendNewData1;
+    private string walletInfoData;
+    private string walletUpdateData;
+    // public bool canRemoveTouchBlock { get; private set; }
+
+    public bool foundWinner;
+    public bool isDataSend;
+    string myRoomId;
+    //public static GameManager instance;
+    //matchmaking Variable
+    [SerializeField] GameObject ReplayBtn;
+
+    //[SerializeField] public Image blocker;
+    public bool isGameOver;
+    [SerializeField] GameObject NoBalPop;
+    //[SerializeField] GameObject P2;
+    [SerializeField] GameObject Footer_1;
+    [SerializeField] Text ChanceLeft;
+    [SerializeField] Text ReloadPrice;
+
+    private bool isReEntryPaid;
+    private bool isSingleEntry;
+
+
     //Testing variables
     private bool pieceHasFallen = false;
 
@@ -101,10 +143,53 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "freestyle")
+        if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "Free")
             gameMode = CommonValues.GameMode.FREESTYLE;
-        else if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
+        if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
             gameMode = CommonValues.GameMode.BLACK_AND_WHITE;
+
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
+        {
+            if (AndroidtoUnityJSON.instance.mm_player == "2")
+            {
+                //P2.SetActive(true);
+
+                if (AndroidtoUnityJSON.instance.entry_type == "re entry paid")
+                {
+                    isReEntryPaid = true;
+                }
+                else if (AndroidtoUnityJSON.instance.entry_type == "re entry")
+                {
+                    isReEntryPaid = false;
+                }
+                else if (AndroidtoUnityJSON.instance.entry_type == "single entry")
+                {
+                    isSingleEntry = true;
+                }
+
+                //StartCoroutine(StartOnlinePlay());
+            }
+            else if (AndroidtoUnityJSON.instance.mm_player == "1")
+            {
+                //VS.SetActive(false);
+                //P2.SetActive(false);
+
+                if (AndroidtoUnityJSON.instance.entry_type == "re entry paid")
+                {
+                    isReEntryPaid = true;
+                }
+                else if (AndroidtoUnityJSON.instance.entry_type == "re entry")
+                {
+                    isReEntryPaid = false;
+                }
+                else if (AndroidtoUnityJSON.instance.entry_type == "single entry")
+                {
+                    isSingleEntry = true;
+                }
+
+                //StartCoroutine(StartOfflinePlay());
+            }
+        }
 
         Debug.Log("Game mode: " + gameMode);
 
@@ -139,7 +224,9 @@ public class GameManager : MonoBehaviour
 
         Random.InitState(42);
         this.enabled = false;
+        isChatEnabled = true;
     }
+
     public void OnEnable()
     {
         if (hasBot)
@@ -256,6 +343,37 @@ public class GameManager : MonoBehaviour
         }
         
     }
+
+    //public void GetPlayerNamesFromServer(int player1Name,int player2Name )
+    //{
+    //    if (gameMode == CommonValues.GameMode.BLACK_AND_WHITE)
+    //    {
+    //        if (playerNumberOnline == 0)
+    //        {
+    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
+    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
+    //        }
+    //        else
+    //        {
+    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
+    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        if (playerNumberOnline == 0)
+    //        {
+    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
+    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
+    //        }
+    //        else
+    //        {
+    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
+    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
+    //        }
+
+    //    }
+    //}
 
     public void ChangeScore(uint playerNumber, int value)
     {
@@ -473,6 +591,26 @@ public class GameManager : MonoBehaviour
         setKinematicForPieces(true);
     }
 
+    public void CheckColorFlip()
+    {
+        if (coloursFlipped)
+        {
+            foreach (var piece in piecesOnBoard)
+            {
+                if (piece.Colour != CommonValues.Colour.RED)
+                {
+                    if (piece.Colour == CommonValues.Colour.BLACK)
+                    {
+                        piece.Colour = CommonValues.Colour.WHITE;
+                    }
+                    else if (piece.Colour == CommonValues.Colour.WHITE)
+                    {
+                        piece.Colour = CommonValues.Colour.BLACK;
+                    }
+                }
+            }
+        }
+    }
     public void ResumeGame(bool value, bool setTurn)
     {
         gameStarted = true;
@@ -495,7 +633,7 @@ public class GameManager : MonoBehaviour
 
     public void GeneratePiecesForBlackAndWhiteMode(bool flipColour)
     {
-        PieceGenerator.instance.GeneratePieces(false);
+        PieceGenerator.instance.GeneratePieces(flipColour);
     }
 
     public void StartGameForBlackAndWhiteMode(bool coloursFlipped)
@@ -761,6 +899,46 @@ public class GameManager : MonoBehaviour
             //Time.timeScale = 0f;
         }
 
+        if (AndroidtoUnityJSON.instance.game_mode == "tour" && AndroidtoUnityJSON.instance.entry_type == "single entry")
+        {
+            ChanceLeft.gameObject.SetActive(false);
+            ReplayBtn.transform.parent.gameObject.SetActive(false);
+            Footer_1.SetActive(true);
+        }
+        else if (AndroidtoUnityJSON.instance.game_mode == "tour")
+        {
+            if (attemptNo <= 0)
+            {
+                ReplayBtn.transform.parent.gameObject.SetActive(false);
+                Footer_1.SetActive(true);
+            }
+
+            ChanceLeft.gameObject.SetActive(true);
+            ChanceLeft.text = "Chances Left: " + attemptNo;
+        }
+        else if (AndroidtoUnityJSON.instance.game_mode == "battle")
+        {
+            ChanceLeft.gameObject.SetActive(false);
+        }
+
+
+
+        //if (AndroidtoUnityJSON.instance.mm_player == "1")
+        //{
+        //    LosserNameText.transform.parent.gameObject.SetActive(false);
+        //}
+
+
+
+        if (float.Parse(AndroidtoUnityJSON.instance.game_fee) <= 0 || AndroidtoUnityJSON.instance.entry_type == "re entry" && AndroidtoUnityJSON.instance.game_mode == "tour")
+        {
+            ReloadPrice.text = "FREE";
+        }
+        else
+        {
+            ReloadPrice.text = /* "?" +*/ AndroidtoUnityJSON.instance.game_fee;
+        }
+
         LeaderboardScreen.SetActive(true);
 
         LeaderboardUIManager.instance.SetLeaderboardData(isWon);
@@ -794,7 +972,7 @@ public class GameManager : MonoBehaviour
         StrikerController.instance.DisableStriker();
         if (strikerInPocket ||!GameOverCheck())
         {
-            if (strikerInPocket)
+            if (strikerInPocket && pieceHasFallen)
             {
                 strikerInPocket = false;
                 StartCoroutine(Penalty());
@@ -1182,23 +1360,23 @@ public class GameManager : MonoBehaviour
         switch (type)
         {
             case 1:
-                msg = "Awesome!";
-                break;
-
-            case 2:
                 msg = "Nice Shot";
                 break;
 
+            case 2:
+                msg = "Victory is mine";
+                break;
+
             case 3:
-                msg = "You are good";
+                msg = "The Clock is TICKING!";
                 break;
 
             case 4:
-                msg = "Take your time";
+                msg = "What a strike!";
                 break;
 
             case 5:
-                msg = "Victory is mine";
+                msg = "Thanks";
                 break;
 
             case 6:
@@ -1206,7 +1384,59 @@ public class GameManager : MonoBehaviour
                 break;
 
             case 7:
+                msg = "Awesome!";
+                break;
+
+            case 8:
                 msg = "LOL";
+                break;
+
+            case 9:
+                msg = "You are good";
+                break;
+
+            case 10:
+                msg = "Sorry";
+                break;
+
+            case 11:
+                msg = "Lucky!";
+                break;
+
+            case 12:
+                msg = "Take your time";
+                break;
+
+            case 13:
+                msg = "hehehehe";
+                break;
+
+            case 14:
+                msg = "Nice try";
+                break;
+
+            case 15:
+                msg = "Good Game";
+                break;
+
+            case 16:
+                msg = "Well Played";
+                break;
+
+            case 17:
+                msg = "OOPS!";
+                break;
+
+            case 18:
+                msg = "Ouch";
+                break;
+
+            case 19:
+                msg = "Close One!";
+                break;
+
+            case 20:
+                msg = "Whoa!";
                 break;
         }
 
@@ -1224,8 +1454,26 @@ public class GameManager : MonoBehaviour
         //}
 
         //PRESET
-        NetworkClient.instance.SendChatMsg((int)playerNumberOnline, msg);
-        StartCoroutine(ChatDisplay((int)playerNumberOnline, msg));
+        if (isChatEnabled == false)
+        {
+            MenuManager.instance.chatPopUp.gameObject.SetActive(false);
+            StartCoroutine(EnableCheck());
+
+        }
+        if (isChatEnabled)
+        {
+
+            NetworkClient.instance.SendChatMsg((int)playerNumberOnline, msg);
+            StartCoroutine(ChatDisplay((int)playerNumberOnline, msg));
+            MenuManager.instance.chatPopUp.gameObject.SetActive(false);
+        }
+
+        IEnumerator EnableCheck()
+        {
+            WarningMessage.SetActive(true);
+            yield return new WaitForSeconds(4f);
+            WarningMessage.SetActive(false);
+        }
     }
 
     public void ReceiveChatAndShow(int playerId, string msg)
@@ -1236,11 +1484,16 @@ public class GameManager : MonoBehaviour
     IEnumerator ChatDisplay(int id, string msg)
     {
         GameObject bubble = null;
-
-        if (playerNumberOnline == 0)
+        
+        
+        if (id == 0)  
             bubble = P1Chat;
-        else
+        if (id == 1)   
             bubble = P2Chat;
+        //if (playerNumberOnline == 0)
+        //    bubble = P1Chat;
+        //else
+        //    bubble = P2Chat;
 
         if (bubble != null)
         {
@@ -1266,5 +1519,36 @@ public class GameManager : MonoBehaviour
         TimerScript.timerOver -= EndTurn;
 
         Application.logMessageReceived -= LogCallback;
+    }
+
+    public void DeductWallet()
+    {
+
+
+        walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
+        //  GlobalWalletBalance += int.Parse(AndroidtoUnityJSON.instance.game_fee);
+
+        //else//-
+        //{
+        //    walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
+        //    GlobalWalletBalance += int.Parse(AndroidtoUnityJSON.instance.game_fee);
+        //}
+
+        walletUpdate.game_id = AndroidtoUnityJSON.instance.game_id;
+        walletUpdate.type = AndroidtoUnityJSON.instance.game_mode;
+
+        string mydata = JsonUtility.ToJson(walletUpdate);
+        WebRequestHandler.Instance.Post(walletUpdateURL, mydata, (response, status) =>
+        {
+            Debug.Log(response + " sent wallet update");
+        });
+
+        //check balance
+        //WebRequestHandler.Instance.Post(walletInfoURL, walletInfoData, (response, status) =>
+        //{
+        //    WalletInfo walletInfoResponse = JsonUtility.FromJson<WalletInfo>(response);
+        //    GlobalWalletBalance = int.Parse(walletInfoResponse.data.cash_balance);
+        //    Debug.Log(GlobalWalletBalance + " <= updated balance");
+        //});
     }
 }
