@@ -12,11 +12,8 @@ public class AndroidtoUnityJSON : MonoBehaviour
     public static AndroidtoUnityJSON instance;
 
     public bool isTest = false;
-<<<<<<< Updated upstream
     public bool isFirst = true;
-=======
-    public bool isFirst;
->>>>>>> Stashed changes
+
 
     public Text data;
 
@@ -46,21 +43,16 @@ public class AndroidtoUnityJSON : MonoBehaviour
 
         if (isTest)
         {
-<<<<<<< Updated upstream
-            player_id = "32323";
-=======
             player_id = "228";
->>>>>>> Stashed changes
             token = "l9452bgQ3jYbKgXwnReONMvaK";
             game_fee = "20";
             profile_image = "https://picsum.photos/400";
             user_name = "John Doe";
-<<<<<<< Updated upstream
             battle_id = "32";
             game_id = "32";
             game_mode = "normal";
             multiplayer_game_mode = "pro";
-=======
+
             game_id = "32";
             game_mode = "battle";
 
@@ -72,16 +64,11 @@ public class AndroidtoUnityJSON : MonoBehaviour
             no_of_attempts = "100";
             mm_player = "1";
             entry_type = "re entry";
->>>>>>> Stashed changes
         }
         else
         {
             getIntentData();
         }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     }
 
     private bool getIntentData()
@@ -100,39 +87,19 @@ public class AndroidtoUnityJSON : MonoBehaviour
         AndroidJavaObject extras = GetExtras(intent);
 
         if (extras != null)
-<<<<<<< Updated upstream
         {
-            //{ 
-            //    "player_id": '22',
-            //    "token": 'skldnsklds',
-            //    "user_name": 'JohnDoe',
-            //    "game_id": '33',
-            //    "battle_id": '555',
-            //    "profile_image": 'https://picsum.photos/400',
-            //    "wallet_amount": '333'
-            //}
-
             data.text = "Base app data error!";
-
-=======
-        {            
+          
             //basic
->>>>>>> Stashed changes
             player_id = GetProperty(extras, "player_id");
             token = GetProperty(extras, "token");
             user_name = GetProperty(extras, "user_name");
             game_id = GetProperty(extras, "game_id");
-<<<<<<< Updated upstream
             battle_id = GetProperty(extras, "battle_id");
-=======
->>>>>>> Stashed changes
             profile_image = GetProperty(extras, "profile_image");
             game_fee = GetProperty(extras, "game_fee");
             game_mode = GetProperty(extras, "game_mode");
-
-<<<<<<< Updated upstream
             data.text = "";
-=======
             //battle
             battle_id = GetProperty(extras, "battle_id");
 
@@ -143,9 +110,6 @@ public class AndroidtoUnityJSON : MonoBehaviour
             no_of_attempts = GetProperty(extras, "no_of_attempts");
             mm_player = GetProperty(extras, "mm_player");
             entry_type = GetProperty(extras, "entry_type");
-                  
->>>>>>> Stashed changes
-
             return true;
         }
 #endif
