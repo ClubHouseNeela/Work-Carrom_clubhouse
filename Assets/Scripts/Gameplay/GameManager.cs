@@ -143,7 +143,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "Free")
+        if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "free")
             gameMode = CommonValues.GameMode.FREESTYLE;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
             gameMode = CommonValues.GameMode.BLACK_AND_WHITE;
@@ -343,37 +343,6 @@ public class GameManager : MonoBehaviour
         }
         
     }
-
-    //public void GetPlayerNamesFromServer(int player1Name,int player2Name )
-    //{
-    //    if (gameMode == CommonValues.GameMode.BLACK_AND_WHITE)
-    //    {
-    //        if (playerNumberOnline == 0)
-    //        {
-    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
-    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
-    //        }
-    //        else
-    //        {
-    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
-    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (playerNumberOnline == 0)
-    //        {
-    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
-    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
-    //        }
-    //        else
-    //        {
-    //            MatchMakingUIManager.instance.PlayerGameName[0].text = player1Name.ToString() ;
-    //            MatchMakingUIManager.instance.PlayerGameName[1].text = player2Name.ToString() ;
-    //        }
-
-    //    }
-    //}
 
     public void ChangeScore(uint playerNumber, int value)
     {

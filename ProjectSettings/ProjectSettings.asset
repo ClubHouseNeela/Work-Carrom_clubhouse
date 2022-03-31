@@ -250,7 +250,7 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: E:/GJP Keystore/gjp.keystore
+  AndroidKeystoreName: D:/Projects/Games/GJP/gjp.keystore
   AndroidKeyaliasName: gjp
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
