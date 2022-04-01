@@ -12,8 +12,7 @@ public class AndroidtoUnityJSON : MonoBehaviour
     public static AndroidtoUnityJSON instance;
 
     public bool isTest = false;
-    public bool isFirst = true;
-
+    public bool isFirst = false;
 
     public Text data;
 

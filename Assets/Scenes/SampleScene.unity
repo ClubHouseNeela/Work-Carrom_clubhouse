@@ -8051,7 +8051,7 @@ MonoBehaviour:
   token: l9452bgQ3jYbKgXwnReONMvaK
   game_fee: 20
   profile_image: https://picsum.photos/400
-  user_name: John Doe
+  user_name: 'John '
   battle_id: 26
   game_id: 28
   game_mode: battle
@@ -11599,7 +11599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 75, y: 0}
+  m_AnchoredPosition: {x: 91.3, y: 0}
   m_SizeDelta: {x: 118, y: 47}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1715650569
@@ -13932,8 +13932,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -90, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -77.5, y: 0}
+  m_SizeDelta: {x: 150.1, y: 44.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1881127137
 MonoBehaviour:
@@ -13955,7 +13955,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7fd5e73897cfd444a90c02c6e6ed3049, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dea98e842fba29547bc000d62867a841, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
