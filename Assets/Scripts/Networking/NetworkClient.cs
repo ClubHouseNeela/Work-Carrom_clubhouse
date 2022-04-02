@@ -217,6 +217,21 @@ public class NetworkClient : SocketIOComponent
             roomID = roomID.Remove(0, 1);
             roomID = roomID.Remove(roomID.Length - 1, 1);
             matchDetails.roomID = roomID;
+
+            var botindex = 0;
+
+            if (matchDetails.playerName[0] == AndroidtoUnityJSON.instance.user_name)
+            {
+                botindex = 1;
+            }
+
+            if (matchDetails.playerId[botindex] == 0)
+            {
+                matchDetails.playerId[botindex] = oppPlayerId;
+                matchDetails.playerName[botindex] = oppPlayerName;
+                matchDetails.playerDp[botindex] = oppPlayerDp;
+            }
+
             GameManager.instance.hasBot = bool.Parse(E.data["hasBot"].ToString());
             GameManager.instance.enabled = true;
             
@@ -622,8 +637,6 @@ public class NetworkClient : SocketIOComponent
         if (!disconnected && GameManager.instance)
         {
             // For socket disconnecting
-            EndScreen.SetActive(true);
-            LeaderboardUIManager.instance.SetLeaderboardData(false);
             base.OnApplicationQuit();
         }
 

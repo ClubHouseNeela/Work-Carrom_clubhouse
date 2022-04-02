@@ -26,6 +26,8 @@ public class MatchMakingUIManager : MonoBehaviour
 
     private const string glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    public GameObject back_btn;
+
     public string getTournAttemptURL = "https://admin.gamejoypro.com/api/getattempts";
     public WallUpdate walletUpdate;
 
@@ -38,7 +40,7 @@ public class MatchMakingUIManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.PLAYER_MOBILE_NUMBER, playerID);
+        //PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.PLAYER_MOBILE_NUMBER, playerID);
     }
 
     private void Start()
@@ -70,7 +72,7 @@ public class MatchMakingUIManager : MonoBehaviour
             {
                 opponentID += glyphs[Random.Range(0, glyphs.Length)];
             }
-            PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER, opponentID);
+            //PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER, opponentID);
             playerMobileNumberText.text = AndroidtoUnityJSON.instance.user_name;//playerID;
             PlayerGameName.text = AndroidtoUnityJSON.instance.user_name;//playerID;
             WebRequestHandler.Instance.DownloadSprite(AndroidtoUnityJSON.instance.profile_image, (sprite) =>
@@ -145,17 +147,17 @@ public class MatchMakingUIManager : MonoBehaviour
         if (NetworkClient.instance.matchDetails.playerId[1] != 0)
         {
             //if player
+            GameManager.instance.playerNumberOnline = 0;
 
-            var index = 0;
-
-            if (NetworkClient.instance.matchDetails.playerName[index] == AndroidtoUnityJSON.instance.user_name)
+            if (NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline] == AndroidtoUnityJSON.instance.user_name)
             {
-                index = 1;
+                GameManager.instance.playerNumberOnline = 1;
             }
 
-            OpponentGameName.text = NetworkClient.instance.matchDetails.playerName[index];
-            opponentMobileNumberText.text = NetworkClient.instance.matchDetails.playerName[index];
-            WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[index], (sprite) =>
+            OpponentGameName.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+            opponentMobileNumberText.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+            
+            WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[GameManager.instance.playerNumberOnline], (sprite) =>
             {
                 oppgameImg.sprite = sprite;
                 opponentImage.sprite = sprite;
@@ -242,6 +244,7 @@ public class MatchMakingUIManager : MonoBehaviour
         Random.InitState(randomSeed);
         if (initialStart)
         {
+            back_btn.gameObject.SetActive(false);
             Debug.Log("Player number in server: " + GameManager.instance.playerNumberOnline);
             SetOpponentNumberText();
             StartCoroutine(LoadingOver(firstTurn));

@@ -42,7 +42,14 @@ public class LeaderboardUIManager : MonoBehaviour
 
     public void SetLeaderboardData(bool isWon)
     {
-        if(isWon)
+        var botindex = 0;
+
+        if (NetworkClient.instance.matchDetails.playerName[0] == AndroidtoUnityJSON.instance.user_name)
+        {
+            botindex = 1;
+        }
+
+        if (isWon)
         {
             winPlayerName.text = MatchMakingUIManager.instance.playerMobileNumberText.text;
             loosePlayerName.text = MatchMakingUIManager.instance.opponentMobileNumberText.text;
@@ -61,9 +68,9 @@ public class LeaderboardUIManager : MonoBehaviour
 
             sendThisPlayerData.winning_details.thisplayerScore = GameManager.instance.GetScore(0);
             sendThisPlayerData.winning_details.winningPlayerScore = GameManager.instance.GetScore(0).ToString();
-            sendThisPlayerData.winning_details.winningPlayerID = NetworkClient.instance.matchDetails.playerId[1].ToString();
+            sendThisPlayerData.winning_details.winningPlayerID = AndroidtoUnityJSON.instance.player_id;
             sendThisPlayerData.winning_details.lossingPlayerScore = GameManager.instance.GetScore(1).ToString();
-            sendThisPlayerData.winning_details.lossingPlayerID = NetworkClient.instance.oppPlayerId.ToString();
+            sendThisPlayerData.winning_details.lossingPlayerID = NetworkClient.instance.matchDetails.playerId[botindex].ToString();
 
             sendThisPlayerData.game_end_time = GetSystemTime();
         }
@@ -86,17 +93,17 @@ public class LeaderboardUIManager : MonoBehaviour
 
             sendThisPlayerData.winning_details.thisplayerScore = GameManager.instance.GetScore(0);
             sendThisPlayerData.winning_details.winningPlayerScore = GameManager.instance.GetScore(1).ToString();
-            sendThisPlayerData.winning_details.winningPlayerID = NetworkClient.instance.oppPlayerId.ToString();
+            sendThisPlayerData.winning_details.winningPlayerID = NetworkClient.instance.matchDetails.playerId[botindex].ToString();
             sendThisPlayerData.winning_details.lossingPlayerScore = GameManager.instance.GetScore(0).ToString();
-            sendThisPlayerData.winning_details.lossingPlayerID = NetworkClient.instance.matchDetails.playerId[1].ToString();
+            sendThisPlayerData.winning_details.lossingPlayerID = AndroidtoUnityJSON.instance.player_id;
 
             sendThisPlayerData.game_end_time = GetSystemTime();
         }
 
-        if (NetworkClient.instance.matchDetails.playerId[1] == 0)
-            sendThisPlayerData.player_id = NetworkClient.instance.oppPlayerId.ToString();
-        else
+        if(NetworkClient.instance.matchDetails.playerId[0] == int.Parse(AndroidtoUnityJSON.instance.player_id))
             sendThisPlayerData.player_id = NetworkClient.instance.matchDetails.playerId[1].ToString();
+        else
+            sendThisPlayerData.player_id = NetworkClient.instance.matchDetails.playerId[0].ToString();
 
         sendThisPlayerData.wallet_amt = AndroidtoUnityJSON.instance.game_fee.ToString();
         sendThisPlayerData.game_mode = AndroidtoUnityJSON.instance.game_mode;
@@ -109,8 +116,7 @@ public class LeaderboardUIManager : MonoBehaviour
 
         string sendWinningDetailsData = JsonUtility.ToJson(winning_details);
         string sendNewData = JsonUtility.ToJson(sendThisPlayerData);
-
-        //Debug.Log(sendNewData + " <= sendNewData");
+                
         WebRequestHandler.Instance.Post(sendDataURL, sendNewData, (response, status) =>
         {
             Debug.Log(response + " <- HitNewApi");
@@ -118,14 +124,6 @@ public class LeaderboardUIManager : MonoBehaviour
 
         isDataSend = true;
     }
-
-    //public class WalletInfoData
-    //{
-    //    public string cash_balance;
-    //    public string winning_balance;
-    //    public string bonus_amount;
-    //    public string coin_balance;
-    //}
 
     public void Reload()
     {
