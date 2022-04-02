@@ -205,6 +205,8 @@ public class MenuManager : MonoBehaviour
 
     public void LeaveGame()
     {
+        NetworkClient.instance.EndScreen.SetActive(true);
+        LeaderboardUIManager.instance.SetLeaderboardData(false);
         NetworkClient.instance.LeaveMatch();
     }
 }

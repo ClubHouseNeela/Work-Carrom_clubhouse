@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "ZD22226XHP",
+    "m_SelectedDeviceId": "RZ8N70C6XRT",
     "m_SelectedPackage": {
-        "deviceId": "ZD22226XHP",
+        "deviceId": "RZ8N70C6XRT",
         "name": "com.gamejoypro.carrom",
-        "processId": 26679,
+        "processId": 19336,
         "exited": false
     },
     "m_SelectedPriority": 1,
@@ -126,6 +126,12 @@
             "deviceId": "R52R503LXDP",
             "name": "com.gamejoypro.carrom",
             "processId": 22679,
+            "exited": false
+        },
+        {
+            "deviceId": "RZ8N70C6XRT",
+            "name": "com.gamejoypro.carrom",
+            "processId": 19336,
             "exited": false
         }
     ],

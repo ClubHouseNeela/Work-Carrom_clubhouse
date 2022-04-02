@@ -604,9 +604,7 @@ public class NetworkClient : SocketIOComponent
                         //TimerScript.instance.StopTimer();
                         SetPlayerPrefs();
                         MenuManager.instance.StartLoadingScreen();
-                        needToRejoinRoom = true;
-                        EndScreen.SetActive(true);
-                        LeaderboardUIManager.instance.SetLeaderboardData(false);
+                        needToRejoinRoom = true;                        
                         Application.Quit();
                     }
                 }
@@ -614,8 +612,6 @@ public class NetworkClient : SocketIOComponent
             else
             {
                 ResetPlayerPrefs();
-                EndScreen.SetActive(true);
-                LeaderboardUIManager.instance.SetLeaderboardData(false);
                 Application.Quit();
             }
         }
