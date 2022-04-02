@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "LFCYMNDIMB8TX489",
+    "m_SelectedDeviceId": "ZD22226XHP",
     "m_SelectedPackage": {
-        "deviceId": "LFCYMNDIMB8TX489",
+        "deviceId": "ZD22226XHP",
         "name": "com.gamejoypro.carrom",
-        "processId": 21452,
+        "processId": 26679,
         "exited": false
     },
     "m_SelectedPriority": 1,
@@ -40,44 +40,38 @@
         },
         {
             "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.games",
-            "processId": 27830,
-            "exited": false
-        },
-        {
-            "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 31412,
-            "exited": true
-        },
-        {
-            "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 1766,
-            "exited": true
-        },
-        {
-            "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 2229,
-            "exited": true
-        },
-        {
-            "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 2489,
-            "exited": true
-        },
-        {
-            "deviceId": "ZD22226XHP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 2986,
-            "exited": true
-        },
-        {
-            "deviceId": "ZD22226XHP",
             "name": "com.gamejoypro.carrom",
             "processId": 3550,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 5510,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 5621,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 24112,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 24399,
+            "exited": true
+        },
+        {
+            "deviceId": "ZD22226XHP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 26679,
             "exited": false
         },
         {
@@ -102,6 +96,36 @@
             "deviceId": "LFCYMNDIMB8TX489",
             "name": "com.gamejoypro.carrom",
             "processId": 21452,
+            "exited": false
+        },
+        {
+            "deviceId": "R52R503LXDP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 4144,
+            "exited": true
+        },
+        {
+            "deviceId": "R52R503LXDP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 5128,
+            "exited": true
+        },
+        {
+            "deviceId": "R52R503LXDP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 32185,
+            "exited": true
+        },
+        {
+            "deviceId": "R52R503LXDP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 31327,
+            "exited": true
+        },
+        {
+            "deviceId": "R52R503LXDP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 22679,
             "exited": false
         }
     ],

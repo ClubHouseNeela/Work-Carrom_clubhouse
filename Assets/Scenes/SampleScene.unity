@@ -8045,8 +8045,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTest: 0
-  isFirst: 0
-  data: {fileID: 0}
+  isFirst: 1
   player_id: 228
   token: l9452bgQ3jYbKgXwnReONMvaK
   game_fee: 20
@@ -8054,14 +8053,14 @@ MonoBehaviour:
   user_name: 'John '
   battle_id: 26
   game_id: 28
-  game_mode: battle
+  game_mode: tour
   tour_name: Free High Score Tournament
   tour_mode: High Score based
   tour_id: 60
   no_of_attempts: 100
   mm_player: 2
-  entry_type: re entry paid
-  multiplayer_game_mode: Free
+  entry_type: re entry
+  multiplayer_game_mode: free
 --- !u!114 &1109313449
 MonoBehaviour:
   m_ObjectHideFlags: 0

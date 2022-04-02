@@ -107,8 +107,6 @@ public class LeaderboardUIManager : MonoBehaviour
         else if (AndroidtoUnityJSON.instance.game_mode == "battle")
             sendThisPlayerData.battle_tournament_id = AndroidtoUnityJSON.instance.battle_id;
 
-        sendThisPlayerData.game_status = "FINISHED";
-
         string sendWinningDetailsData = JsonUtility.ToJson(winning_details);
         string sendNewData = JsonUtility.ToJson(sendThisPlayerData);
 

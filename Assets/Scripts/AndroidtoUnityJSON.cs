@@ -14,8 +14,6 @@ public class AndroidtoUnityJSON : MonoBehaviour
     public bool isTest = false;
     public bool isFirst = false;
 
-    public Text data;
-
     [Header("Battle")]
     public string player_id;
     public string token;
@@ -87,7 +85,6 @@ public class AndroidtoUnityJSON : MonoBehaviour
 
         if (extras != null)
         {
-            data.text = "Base app data error!";
           
             //basic
             player_id = GetProperty(extras, "player_id");
@@ -98,7 +95,8 @@ public class AndroidtoUnityJSON : MonoBehaviour
             profile_image = GetProperty(extras, "profile_image");
             game_fee = GetProperty(extras, "game_fee");
             game_mode = GetProperty(extras, "game_mode");
-            data.text = "";
+            multiplayer_game_mode = GetProperty(extras, "multiplayer_game_mode");
+            
             //battle
             battle_id = GetProperty(extras, "battle_id");
 
