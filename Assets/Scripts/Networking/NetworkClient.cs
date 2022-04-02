@@ -11,6 +11,7 @@ public class NetworkClient : SocketIOComponent
     public static NetworkClient instance;
     public RejoinRoomInfo rejoinRoom = new RejoinRoomInfo();
     public MatchStartDetails matchDetails = new MatchStartDetails();
+    public GameObject EndScreen;
 
     private StrikerInfo shootForce = new StrikerInfo();
     private MatchData matchData = new MatchData();
@@ -589,6 +590,8 @@ public class NetworkClient : SocketIOComponent
                         SetPlayerPrefs();
                         MenuManager.instance.StartLoadingScreen();
                         needToRejoinRoom = true;
+                        EndScreen.SetActive(true);
+                        LeaderboardUIManager.instance.SetLeaderboardData(false);
                         Application.Quit();
                     }
                 }
@@ -596,6 +599,8 @@ public class NetworkClient : SocketIOComponent
             else
             {
                 ResetPlayerPrefs();
+                EndScreen.SetActive(true);
+                LeaderboardUIManager.instance.SetLeaderboardData(false);
                 Application.Quit();
             }
         }
@@ -617,6 +622,8 @@ public class NetworkClient : SocketIOComponent
         if (!disconnected && GameManager.instance)
         {
             // For socket disconnecting
+            EndScreen.SetActive(true);
+            LeaderboardUIManager.instance.SetLeaderboardData(false);
             base.OnApplicationQuit();
         }
 
