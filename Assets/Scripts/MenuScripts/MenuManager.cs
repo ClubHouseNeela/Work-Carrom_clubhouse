@@ -27,7 +27,7 @@ public class MenuManager : MonoBehaviour
     playerNameText, opponentNameText, loadingScreenText;
 
     [SerializeField] private Sprite[]
-    soundButtonSprites, chatEnabledSprites;
+    soundButtonSprites, chatEnabledSprites, toggleButtonSprites;
 
     [SerializeField] private Button[]
     emojis;
@@ -106,6 +106,13 @@ public class MenuManager : MonoBehaviour
             AudioManager.instance.Play("ButtonClick1");
             AudioManager.instance.Mute = !AudioManager.instance.Mute;
             soundMuteButton.image.sprite = soundButtonSprites[AudioManager.instance.Mute ? 1 : 0];
+        });
+
+        soundOptionsButton.onClick.AddListener(() =>
+        {
+            AudioManager.instance.Play("ButtonClick1");
+            AudioManager.instance.Mute = !AudioManager.instance.Mute;
+            soundOptionsButton.transform.gameObject.transform.GetChild(1).GetComponent<Image>().sprite = toggleButtonSprites[AudioManager.instance.Mute ? 1 : 0];
         });
 
         chatEnabledButton.onClick.AddListener(() =>
