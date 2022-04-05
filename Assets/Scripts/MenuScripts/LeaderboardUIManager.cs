@@ -14,13 +14,13 @@ public class LeaderboardUIManager : MonoBehaviour
 
     private string WalletInfoData;
     public bool canRestart = false;
-    public GameObject NoBalPop;
+    public GameObject NoBalPop, Footer_1, Footer;
 
     private string
     playerID, opponentID;
 
     public Text
-    winPlayerName, loosePlayerName, winScore, looseScore, mainRank, mainScore, titleMsg;
+    winPlayerName, loosePlayerName, winScore, looseScore, mainRank, mainScore, titleMsg, chancesLeft;
 
     public SendData sendThisPlayerData;
     public WinningDetails winning_details;
@@ -42,6 +42,21 @@ public class LeaderboardUIManager : MonoBehaviour
 
     public void SetLeaderboardData(bool isWon)
     {
+        if(AndroidtoUnityJSON.instance.game_mode == "tour")
+        {
+            Footer.SetActive(false);
+            Footer_1.SetActive(true);
+
+            chancesLeft.text = GameManager.instance.attemptNo.ToString();
+            chancesLeft.gameObject.SetActive(true);
+        }
+        else
+        {
+            Footer.SetActive(true);
+            Footer_1.SetActive(false);
+            chancesLeft.gameObject.SetActive(false);
+        }
+
         var botindex = 0;
 
         if (NetworkClient.instance.matchDetails.playerName[0] == AndroidtoUnityJSON.instance.user_name)

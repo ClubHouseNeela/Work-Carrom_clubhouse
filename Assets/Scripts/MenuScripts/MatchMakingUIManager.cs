@@ -200,11 +200,11 @@ public class MatchMakingUIManager : MonoBehaviour
 
         if (AndroidtoUnityJSON.instance.game_mode == "tour")
         {
-            if (AndroidtoUnityJSON.instance.entry_type == "re entry" && AndroidtoUnityJSON.instance.isFirst ||
-                AndroidtoUnityJSON.instance.entry_type == "re entry paid" || AndroidtoUnityJSON.instance.entry_type == "single entry")
-            {
-                DeductWallet();
-            }
+            //if (AndroidtoUnityJSON.instance.entry_type == "re entry" && AndroidtoUnityJSON.instance.isFirst ||
+            //    AndroidtoUnityJSON.instance.entry_type == "re entry paid" || AndroidtoUnityJSON.instance.entry_type == "single entry")
+            //{
+            //    DeductWallet();
+            //}
         }
         else
         {
