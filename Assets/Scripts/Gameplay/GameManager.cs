@@ -1454,15 +1454,10 @@ public class GameManager : MonoBehaviour
     {
         GameObject bubble = null;
         
-        
         if (id == 0)  
             bubble = P1Chat;
         if (id == 1)   
             bubble = P2Chat;
-        //if (playerNumberOnline == 0)
-        //    bubble = P1Chat;
-        //else
-        //    bubble = P2Chat;
 
         if (bubble != null)
         {
