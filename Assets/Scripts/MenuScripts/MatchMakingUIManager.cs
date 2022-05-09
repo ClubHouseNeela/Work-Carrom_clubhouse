@@ -208,7 +208,8 @@ public class MatchMakingUIManager : MonoBehaviour
         }
         else
         {
-            DeductWallet();
+            if(!NetworkClient.instance.noPlayer)
+                DeductWallet();
         }
     }
 
@@ -233,7 +234,9 @@ public class MatchMakingUIManager : MonoBehaviour
         if (gameObject.activeInHierarchy)
         {
             loadingIconSequence.Kill();
-            gameObject.SetActive(false);
+
+            if (!NetworkClient.instance.noPlayer)
+                gameObject.SetActive(false);
         }
 
         //Destroy(gameObject);

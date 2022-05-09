@@ -93,3 +93,20 @@ public class BotListData
     public string last_name;
     public string image;
 }
+
+[Serializable]
+public class WalletCheckPost
+{
+    public string game_id;
+    public string tournament_battle_id;
+    public string type;
+}
+
+[Serializable]
+public class WalletCheck
+{
+    public string status;
+    public string code;
+    public string message;
+    public string data;
+}

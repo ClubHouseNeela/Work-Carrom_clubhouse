@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour
     //[SerializeField] public Image blocker;
     public bool isGameOver;
     [SerializeField] GameObject NoBalPop;
+    public GameObject ExitPop;
     //[SerializeField] GameObject P2;
     [SerializeField] GameObject Footer_1;
     [SerializeField] Text ChanceLeft;

@@ -42,6 +42,8 @@ public class NetworkClient : SocketIOComponent
     public string oppPlayerName;
     public string oppPlayerDp;
 
+    public bool noPlayer = false;
+
     #endregion
 
     //--------------------------------------------------------------------------------------------------------------------------------------
@@ -57,6 +59,13 @@ public class NetworkClient : SocketIOComponent
             Destroy(gameObject);
         //DontDestroyOnLoad(gameObject);*/
     }
+
+    IEnumerator StartQuit(float sec)
+    {
+        yield return new WaitForSeconds(sec);
+        Application.Quit();
+    }
+
     public override void Start()
     {
         Debug.Log("android data => " +
@@ -70,17 +79,29 @@ public class NetworkClient : SocketIOComponent
         {
             botList = JsonUtility.FromJson<BotList>(response);
 
-            for (int z = 0; z < botList.data.Length; z++)
-                botDetailsList.Add(z);
+            if (botList.data == null)
+            {
+                GameManager.instance.ExitPop.SetActive(true);
+                StartCoroutine(StartQuit(2.0f));
+                noPlayer = true;
+            }
+            else
+            {
+                for (int z = 0; z < botList.data.Length; z++)
+                {
+                    botDetailsList.Add(z);
+                }
 
-            System.Random random = new System.Random();
-            botList.data = botList.data.OrderBy(x => random.Next()).ToArray();
+                System.Random random = new System.Random();
+                botList.data = botList.data.OrderBy(x => random.Next()).ToArray();
 
-            Debug.Log("Bot data recvd");            
+                Debug.Log("Bot data recvd");
 
-            oppPlayerId = int.Parse(botList.data[0].id);
-            oppPlayerName = botList.data[0].first_name;
-            oppPlayerDp = botList.data[0].image;
+                oppPlayerId = int.Parse(botList.data[0].id);
+                oppPlayerName = botList.data[0].first_name;
+                oppPlayerDp = botList.data[0].image;
+                noPlayer = false;
+            }
         });
 
         if (GameManager.instance.gameMode != CommonValues.GameMode.PRACTICE && GameManager.instance.gameMode != CommonValues.GameMode.LOCAL_MULTIPLAYER)

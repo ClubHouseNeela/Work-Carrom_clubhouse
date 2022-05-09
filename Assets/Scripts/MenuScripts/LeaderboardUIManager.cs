@@ -22,12 +22,17 @@ public class LeaderboardUIManager : MonoBehaviour
     public Text
     winPlayerName, loosePlayerName, winScore, looseScore, mainRank, mainScore, titleMsg, chancesLeft;
 
+    private string walletUpdateData;
+    private string walletCheckData;
+    public WalletCheck walletCheck;
+    public WalletCheckPost walletCheckPost;
     public SendData sendThisPlayerData;
     public WinningDetails winning_details;
     public WalletInfo walletInfo;
     bool isDataSend;
 
     public string sendDataURL = "http://52.66.182.199/api/gameplay";
+    public string walletCheckURL = "https://livegamejoypro.com/api/checkWallet";
 
     #endregion
 
@@ -64,6 +69,9 @@ public class LeaderboardUIManager : MonoBehaviour
             botindex = 1;
         }
 
+        winPlayerName.transform.parent.transform.GetChild(0).transform.gameObject.SetActive(false);
+        loosePlayerName.transform.parent.transform.GetChild(0).transform.gameObject.SetActive(false);
+
         if (isWon)
         {
             winPlayerName.text = MatchMakingUIManager.instance.playerMobileNumberText.text;
@@ -75,7 +83,7 @@ public class LeaderboardUIManager : MonoBehaviour
 
             mainRank.text = "1";
 
-            titleMsg.text = "You Win!";
+            titleMsg.text = "YOU WON";
 
             sendThisPlayerData.game_status = "WIN";
             
@@ -100,7 +108,7 @@ public class LeaderboardUIManager : MonoBehaviour
 
             mainRank.text = "2";
 
-            titleMsg.text = "You Loose!";
+            titleMsg.text = "YOU LOSE";
 
             sendThisPlayerData.game_status = "LOST";
                      
@@ -143,26 +151,31 @@ public class LeaderboardUIManager : MonoBehaviour
     public void Reload()
     {
         //wallet check
-        float balance = 0f;
+        bool balance = false;
 
-        WalletInfoData = JsonUtility.ToJson(walletInfo);
-        WebRequestHandler.Instance.Post(GameManager.instance.walletInfoURL, WalletInfoData, (response, status) =>
+        walletCheckPost.game_id = AndroidtoUnityJSON.instance.game_id;
+        walletCheckPost.type = AndroidtoUnityJSON.instance.game_mode;
+
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
+            walletCheckPost.tournament_battle_id = AndroidtoUnityJSON.instance.tour_id;
+        else if (AndroidtoUnityJSON.instance.game_mode == "battle")
+            walletCheckPost.tournament_battle_id = AndroidtoUnityJSON.instance.battle_id;
+
+        string walletCheckPostData = JsonUtility.ToJson(walletCheckPost);
+        WebRequestHandler.Instance.Post(walletCheckURL, walletCheckPostData, (response, status) =>
         {
-            WalletInfo walletInfoResponse = JsonUtility.FromJson<WalletInfo>(response);
-            balance = float.Parse(walletInfoResponse.data.cash_balance);
-            Debug.Log(balance + " <= replay check balance");
+            WalletCheck walletCheckResponse = JsonUtility.FromJson<WalletCheck>(response);
+            balance = bool.Parse(walletCheckResponse.status);
+            //Debug.Log(balance + " <= replay check balance");
 
-            if (balance >= float.Parse(AndroidtoUnityJSON.instance.game_fee))
-                canRestart = true;
-            else
-                canRestart = false;
-
-            if (canRestart)
+            if (balance)
+            {
                 SceneManager.LoadScene(0, LoadSceneMode.Single);
+            }
             else
+            {
                 NoBalPop.SetActive(true);
-
-            //Debug.Log("CANT START, NOT ENOUGH BALANCE!"); //show no bal popup
+            }
         });
     }
 
