@@ -56,13 +56,13 @@ public class MatchMakingUIManager : MonoBehaviour
             // Loading icon animation
             loadingIconSequence = DOTween.Sequence();
             float _fadeAmount = 1f;
-            loadingIconSequence.Append(loadingIconImage.DOColor(colourList[0], 1f).SetEase(Ease.InOutSine).From(colourList[colourList.Length - 1]));
-            loadingIconSequence.Join(loadingCircleImage.DOFade(_fadeAmount, 1f).SetEase(Ease.Linear).From(0));
+            loadingIconSequence.Append(loadingCircleImage.DOColor(colourList[0], 1f).SetEase(Ease.InOutSine).From(colourList[colourList.Length - 1]));
+            //loadingIconSequence.Join(loadingCircleImage.DOFade(_fadeAmount, 1f).SetEase(Ease.Linear).From(0));
             for (int i = 1; i < colourList.Length; i++)
             {
                 _fadeAmount = (i % 2 == 0) ? 1f : 0f;
-                loadingIconSequence.Append(loadingIconImage.DOColor(colourList[i], 1f).SetEase(Ease.InOutSine));
-                loadingIconSequence.Join(loadingCircleImage.DOFade(_fadeAmount, 1f).SetEase(Ease.Linear));
+                loadingIconSequence.Append(loadingCircleImage.DOColor(colourList[i], 1f).SetEase(Ease.InOutSine));
+                //loadingIconSequence.Join(loadingCircleImage.DOFade(_fadeAmount, 1f).SetEase(Ease.Linear));
             }
             loadingIconSequence.SetDelay(0f).OnComplete(() => loadingIconSequence.Restart());
 
