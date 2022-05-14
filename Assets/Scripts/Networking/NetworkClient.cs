@@ -648,6 +648,39 @@ public class NetworkClient : SocketIOComponent
 
     private void OnApplicationQuit()
     {
+        //Hit API
+        EndScreen.SetActive(true);
+        if (!LeaderboardUIManager.instance.isDataSend && joinedRoom)
+        {
+            if (matchDetails.playerId[0] == int.Parse(AndroidtoUnityJSON.instance.player_id))
+                LeaderboardUIManager.instance.sendThisPlayerData.player_id = matchDetails.playerId[1].ToString();
+            else
+                LeaderboardUIManager.instance.sendThisPlayerData.player_id = matchDetails.playerId[0].ToString();
+
+            LeaderboardUIManager.instance.sendThisPlayerData.winning_details.thisplayerScore = 0;
+            LeaderboardUIManager.instance.sendThisPlayerData.wallet_amt = AndroidtoUnityJSON.instance.game_fee;
+            LeaderboardUIManager.instance.sendThisPlayerData.game_mode = AndroidtoUnityJSON.instance.game_mode;
+            LeaderboardUIManager.instance.sendThisPlayerData.game_id = AndroidtoUnityJSON.instance.game_id;
+
+            if (AndroidtoUnityJSON.instance.game_mode == "tour")
+                LeaderboardUIManager.instance.sendThisPlayerData.battle_tournament_id = AndroidtoUnityJSON.instance.tour_id;
+            else if (AndroidtoUnityJSON.instance.game_mode == "battle")
+                LeaderboardUIManager.instance.sendThisPlayerData.battle_tournament_id = AndroidtoUnityJSON.instance.battle_id;
+
+            LeaderboardUIManager.instance.sendThisPlayerData.game_end_time = LeaderboardUIManager.instance.GetSystemTime();
+            LeaderboardUIManager.instance.sendThisPlayerData.game_status = "LEFT";
+
+            string sendWinningDetailsData = JsonUtility.ToJson(LeaderboardUIManager.instance.winningDetails);
+            string sendNewData1 = JsonUtility.ToJson(LeaderboardUIManager.instance.sendThisPlayerData);
+            WebRequestHandler.Instance.Post(LeaderboardUIManager.instance.sendDataURL, sendNewData1, (response, status) =>
+            {
+                Debug.Log(response + "HitNewApi");
+            });
+
+            LeaderboardUIManager.instance.isDataSend = true;
+        }
+    
+
         // Save logs at persistent data path in android
         DataSaver.saveData(GameManager.instance.logs, "BountyBunchCarrom_savelog");
 

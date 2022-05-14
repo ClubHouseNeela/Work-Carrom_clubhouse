@@ -27,9 +27,9 @@ public class LeaderboardUIManager : MonoBehaviour
     public WalletCheck walletCheck;
     public WalletCheckPost walletCheckPost;
     public SendData sendThisPlayerData;
-    public WinningDetails winning_details;
+    public WinningDetails winningDetails;
     public WalletInfo walletInfo;
-    bool isDataSend;
+    public bool isDataSend;
 
     public string sendDataURL = "http://52.66.182.199/api/gameplay";
     public string walletCheckURL = "https://livegamejoypro.com/api/checkWallet";
@@ -137,7 +137,7 @@ public class LeaderboardUIManager : MonoBehaviour
         else if (AndroidtoUnityJSON.instance.game_mode == "battle")
             sendThisPlayerData.battle_tournament_id = AndroidtoUnityJSON.instance.battle_id;
 
-        string sendWinningDetailsData = JsonUtility.ToJson(winning_details);
+        string sendWinningDetailsData = JsonUtility.ToJson(winningDetails);
         string sendNewData = JsonUtility.ToJson(sendThisPlayerData);
                 
         WebRequestHandler.Instance.Post(sendDataURL, sendNewData, (response, status) =>
