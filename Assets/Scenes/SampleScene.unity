@@ -268,7 +268,7 @@ MonoBehaviour:
   PlayerGameName: {fileID: 640039877}
   OpponentGameName: {fileID: 984273019}
   back_btn: {fileID: 1754564011}
-  getTournAttemptURL: https://admin.gamejoypro.com/api/getattempts
+  getTournAttemptURL: https://livegamejoypro.com/api/getattempts
   walletUpdate:
     game_id: 
     amount: 
@@ -2328,7 +2328,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &263013741
 GameObject:
@@ -3246,7 +3246,7 @@ RectTransform:
   - {fileID: 1354413970}
   - {fileID: 498493445}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4006,7 +4006,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &533143143
 GameObject:
@@ -5807,7 +5807,7 @@ Transform:
   - {fileID: 974099341}
   - {fileID: 2103852169}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &854666275
 GameObject:
@@ -8202,6 +8202,8 @@ MonoBehaviour:
     playerDp: []
   EndScreen: {fileID: 4499560316028275515}
   roomID: 
+  gameID: 
+  MatchFoundURL: https://livegamejoypro.com/api/storeGameHistory
   botListURL: https://livegamejoypro.com/api/botlist
   botList:
     status: 
@@ -8243,7 +8245,7 @@ MonoBehaviour:
   isFirst: 1
   player_id: 228
   token: KweGxgJqbnRXRmYvrp7j3E1l2
-  game_fee: 20
+  game_fee: 19
   profile_image: https://picsum.photos/400
   user_name: 'John '
   battle_id: 26
@@ -10286,7 +10288,7 @@ RectTransform:
   - {fileID: 833647161}
   - {fileID: 945197283}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -13875,6 +13877,20 @@ MonoBehaviour:
     isConnected: 0
     isBot: 0
     incrementFactor: []
+    player_id: 
+    player_id1: 
+    room_id: 
+    game_mode: 
+    winning_details:
+      thisplayerScore: 0
+      winningPlayerScore: 
+      lossingPlayerScore: 
+      winningPlayerID: 
+      lossingPlayerID: 
+    wallet_amt: 
+    game_status: 
+    game_id: 
+    battle_tournament_id: 
   sendThisPlayerData:
     player_id: 
     room_id: 
@@ -13890,6 +13906,7 @@ MonoBehaviour:
     game_status: 
     game_id: 
     battle_tournament_id: 
+    id: 
   winning_details:
     thisplayerScore: 0
     winningPlayerScore: 
@@ -13934,7 +13951,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1849287877
 MonoBehaviour:
@@ -14015,7 +14032,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1868802196
 GameObject:
@@ -17042,7 +17059,8 @@ MonoBehaviour:
     game_status: 
     game_id: 
     battle_tournament_id: 
-  winning_details:
+    id: 
+  winningDetails:
     thisplayerScore: 0
     winningPlayerScore: 
     lossingPlayerScore: 
@@ -17057,6 +17075,7 @@ MonoBehaviour:
       winning_balance: 
       bonus_amount: 
       coin_balance: 
+  isDataSend: 0
   sendDataURL: https://livegamejoypro.com/api/gameplay
   walletCheckURL: https://livegamejoypro.com/api/checkWallet
 --- !u!224 &4499560316028275524
@@ -20092,7 +20111,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 250, y: -140.80005}
+  m_AnchoredPosition: {x: 250, y: -140.80002}
   m_SizeDelta: {x: 398, y: 224}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5036807310541122213
@@ -22623,7 +22642,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -149, y: -189.5}
+  m_AnchoredPosition: {x: -149, y: -189.49997}
   m_SizeDelta: {x: 268.9, y: 340.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8491498716900114494

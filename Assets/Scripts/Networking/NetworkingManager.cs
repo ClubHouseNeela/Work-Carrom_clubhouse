@@ -19,6 +19,15 @@ public class NetworkingPlayer
     public bool isConnected = false;
     public bool isBot = false;
     public float[] incrementFactor;
+    public string player_id;
+    public string player_id1;
+    public string room_id;
+    public string game_mode;
+    public WinningDetails winning_details;
+    public string wallet_amt; //change it to game_fee
+    public string game_status;
+    public string game_id;
+    public string battle_tournament_id;
 }
 
 [Serializable]
@@ -59,6 +68,7 @@ public class SendData
     public string game_status;
     public string game_id;
     public string battle_tournament_id;
+    public string id;
 }
 
 [Serializable]

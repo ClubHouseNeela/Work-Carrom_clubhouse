@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
 using System.Linq;
+using UnityEngine.Networking;
+using System;
 
 public class NetworkClient : SocketIOComponent
 {
@@ -33,7 +35,10 @@ public class NetworkClient : SocketIOComponent
     public string roomID;
     private WaitForSecondsRealtime oneSec = new WaitForSecondsRealtime(1f);
     private bool isLeft = false;
+    public string gameID;
 
+
+    public string MatchFoundURL;
     public string botListURL = "https://admin.gamejoypro.com/api/botlist";
     public BotList botList;
     public List<int> botDetailsList = new List<int>();
@@ -257,6 +262,7 @@ public class NetworkClient : SocketIOComponent
             GameManager.instance.enabled = true;
             
             MatchMakingUIManager.instance.Matched(matchDetails.firstTurn,matchDetails.initialStart, (int)matchDetails.randomSeed);
+            StartCoroutine(MatchFound());
         });
 
         /*On("UpdateTimer", (E) =>
@@ -374,7 +380,7 @@ public class NetworkClient : SocketIOComponent
         {
             Debug.Log("Setting seed from Server -> " + E.data["randomSeed"].ToString());
             matchDetails.randomSeed = byte.Parse(E.data["randomSeed"].ToString());
-            Random.InitState(matchDetails.randomSeed);
+            UnityEngine.Random.InitState(matchDetails.randomSeed);
         });
 
         On("disconnect", (E) =>
@@ -598,6 +604,57 @@ public class NetworkClient : SocketIOComponent
 #endif
     }
 
+    IEnumerator MatchFound()
+    {
+        WWWForm ww = new WWWForm();
+        ww.AddField("player_id", matchDetails.playerId[1]);
+        ww.AddField("room_id", roomID);
+        ww.AddField("game_mode", AndroidtoUnityJSON.instance.game_mode);
+        ww.AddField("winning_details", GameManager.instance.GetScore(0));
+        ww.AddField("game_end_time", GetSystemTime());
+        ww.AddField("wallet_amt", AndroidtoUnityJSON.instance.game_fee);
+        ww.AddField("game_id", AndroidtoUnityJSON.instance.game_id);
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
+            ww.AddField("battle_tournament_id", AndroidtoUnityJSON.instance.tour_id);
+        else if (AndroidtoUnityJSON.instance.game_mode == "battle")
+            ww.AddField("battle_tournament_id", AndroidtoUnityJSON.instance.battle_id);
+        using (UnityWebRequest updateUserHistory = UnityWebRequest.Post(MatchFoundURL, ww))
+        {
+            updateUserHistory.SetRequestHeader("token", AndroidtoUnityJSON.instance.token);
+            updateUserHistory.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            yield return updateUserHistory.SendWebRequest();
+
+            if (updateUserHistory.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(updateUserHistory.error);
+            }
+            else
+            {
+                JSONObject response = new JSONObject(updateUserHistory.downloadHandler.text);
+
+                var myJsonString = (response["data"]);
+                var id = myJsonString["id"].ToString();
+                gameID = id;
+                Debug.Log("Match URL data upload complete! " );
+            }
+        }
+    }
+
+    public string GetSystemTime()
+    {
+        int hr = DateTime.Now.Hour;
+        int min = DateTime.Now.Minute;
+        int sec = DateTime.Now.Second;
+
+        int year = DateTime.Now.Year;
+        int month = DateTime.Now.Month;
+        int day = DateTime.Now.Day;
+
+        string format = string.Format("{0}:{1}:{2} {3}:{4}:{5}", year, month, day, hr, min, sec);
+
+        return format;
+    }
+
     #endregion
 
     //--------------------------------------------------------------------------------------------------------------------------------------
@@ -646,7 +703,7 @@ public class NetworkClient : SocketIOComponent
 #endif
     }
 
-    private void OnApplicationQuit()
+    private new void OnApplicationQuit()
     {
         //Hit API
         EndScreen.SetActive(true);
@@ -667,6 +724,7 @@ public class NetworkClient : SocketIOComponent
             else if (AndroidtoUnityJSON.instance.game_mode == "battle")
                 LeaderboardUIManager.instance.sendThisPlayerData.battle_tournament_id = AndroidtoUnityJSON.instance.battle_id;
 
+            LeaderboardUIManager.instance.sendThisPlayerData.id = gameID;
             LeaderboardUIManager.instance.sendThisPlayerData.game_end_time = LeaderboardUIManager.instance.GetSystemTime();
             LeaderboardUIManager.instance.sendThisPlayerData.game_status = "LEFT";
 
