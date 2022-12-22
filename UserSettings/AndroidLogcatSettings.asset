@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "1WMHH831Y21145",
+    "m_SelectedDeviceId": "RFCT40ZJFZP",
     "m_SelectedPackage": {
-        "deviceId": "RZ8N70C6XRT",
+        "deviceId": "RFCT40ZJFZP",
         "name": "com.gamejoypro.carrom",
-        "processId": 19336,
+        "processId": 11431,
         "exited": false
     },
     "m_SelectedPriority": 1,
@@ -133,6 +133,66 @@
             "name": "com.gamejoypro.carrom",
             "processId": 19336,
             "exited": false
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 21649,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 9836,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 14137,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 5670,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.gamejoypro.carrom",
+            "processId": 11431,
+            "exited": false
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.gamejoypro.games",
+            "processId": 17376,
+            "exited": true
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.gamejoypro.carrom",
+            "processId": 23321,
+            "exited": true
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.gamejoypro.games",
+            "processId": 31649,
+            "exited": false
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.gamejoypro.carrom",
+            "processId": 21517,
+            "exited": true
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.gamejoypro.carrom",
+            "processId": 7942,
+            "exited": false
         }
     ],
     "m_Tags": {
@@ -185,7 +245,21 @@
         "MemoryGroup": 2,
         "Behavior": 0
     },
-    "m_Filter": " ",
-    "m_FilterIsRegularExpression": false,
-    "m_SymbolPaths": []
+    "m_FilterOptions": {
+        "m_Filter": "",
+        "m_UseRegularExpressions": false,
+        "m_MatchCase": false
+    },
+    "m_SymbolPaths": [],
+    "m_CaptureVideoSettings": {
+        "TimeLimitEnabled": false,
+        "TimeLimit": 180,
+        "VideoSizeEnabled": false,
+        "VideoSizeX": 1280,
+        "VideoSizeY": 720,
+        "BitRateEnabled": false,
+        "BitRateK": 20000,
+        "DisplayIdEnabled": false,
+        "DisplayId": ""
+    }
 }

@@ -31,8 +31,8 @@ public class LeaderboardUIManager : MonoBehaviour
     public WalletInfo walletInfo;
     public bool isDataSend;
 
-    public string sendDataURL = "http://52.66.182.199/api/gameplay";
-    public string walletCheckURL = "https://livegamejoypro.com/api/checkWallet";
+    public string sendDataURL;
+    public string walletCheckURL;
 
     #endregion
 
@@ -43,11 +43,13 @@ public class LeaderboardUIManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        sendDataURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + sendDataURL;
+        walletCheckURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + walletCheckURL;
     }
 
     public void SetLeaderboardData(bool isWon)
     {
-        if(AndroidtoUnityJSON.instance.game_mode == "tour")
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
         {
             Footer.SetActive(false);
             Footer_1.SetActive(true);
@@ -123,14 +125,14 @@ public class LeaderboardUIManager : MonoBehaviour
             sendThisPlayerData.game_end_time = GetSystemTime();
         }
 
-        if(NetworkClient.instance.matchDetails.playerId[0] == int.Parse(AndroidtoUnityJSON.instance.player_id))
+        if (NetworkClient.instance.matchDetails.playerId[0] == int.Parse(AndroidtoUnityJSON.instance.player_id))
             sendThisPlayerData.player_id = NetworkClient.instance.matchDetails.playerId[1].ToString();
         else
             sendThisPlayerData.player_id = NetworkClient.instance.matchDetails.playerId[0].ToString();
-
         sendThisPlayerData.wallet_amt = AndroidtoUnityJSON.instance.game_fee.ToString();
         sendThisPlayerData.game_mode = AndroidtoUnityJSON.instance.game_mode;
         sendThisPlayerData.game_id = AndroidtoUnityJSON.instance.game_id;
+        sendThisPlayerData.id = NetworkClient.instance.gameID;
 
         if (AndroidtoUnityJSON.instance.game_mode == "tour")
             sendThisPlayerData.battle_tournament_id = AndroidtoUnityJSON.instance.tour_id;
@@ -139,7 +141,6 @@ public class LeaderboardUIManager : MonoBehaviour
 
         string sendWinningDetailsData = JsonUtility.ToJson(winningDetails);
         string sendNewData = JsonUtility.ToJson(sendThisPlayerData);
-                
         WebRequestHandler.Instance.Post(sendDataURL, sendNewData, (response, status) =>
         {
             Debug.Log(response + " <- HitNewApi");

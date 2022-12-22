@@ -28,7 +28,7 @@ public class MatchMakingUIManager : MonoBehaviour
 
     public GameObject back_btn;
 
-    public string getTournAttemptURL = "https://admin.gamejoypro.com/api/getattempts";
+    public string getTournAttemptURL;
     public WallUpdate walletUpdate;
 
     #endregion
@@ -40,6 +40,7 @@ public class MatchMakingUIManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        getTournAttemptURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + getTournAttemptURL;
         //PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.PLAYER_MOBILE_NUMBER, playerID);
     }
 

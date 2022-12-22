@@ -97,7 +97,8 @@ namespace SocketIO
 			{
 				url = "ws://127.0.0.1:5000/socket.io/?EIO=4&transport=websocket";
 			}
-			encoder = new Encoder();
+			url = "ws://" + PlayerPrefs.GetString(Constants.FETCH_SERVER_URL) + "socket.io/?EIO=4&transport=websocket";
+            encoder = new Encoder();
 			decoder = new Decoder();
 			parser = new Parser();
 			handlers = new Dictionary<string, List<Action<SocketIOEvent>>>();

@@ -5,6 +5,7 @@ using SocketIO;
 using System.Linq;
 using UnityEngine.Networking;
 using System;
+using UnityEngine.SceneManagement;
 
 public class NetworkClient : SocketIOComponent
 {
@@ -39,7 +40,7 @@ public class NetworkClient : SocketIOComponent
 
 
     public string MatchFoundURL;
-    public string botListURL = "https://admin.gamejoypro.com/api/botlist";
+    public string botListURL;
     public BotList botList;
     public List<int> botDetailsList = new List<int>();
 
@@ -73,6 +74,8 @@ public class NetworkClient : SocketIOComponent
 
     public override void Start()
     {
+        MatchFoundURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + MatchFoundURL;
+        botListURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + botListURL;
         Debug.Log("android data => " +
             AndroidtoUnityJSON.instance.player_id + ", " + AndroidtoUnityJSON.instance.token + ", " + AndroidtoUnityJSON.instance.user_name + ", " +
             AndroidtoUnityJSON.instance.game_id + ", " + AndroidtoUnityJSON.instance.profile_image + ", " + AndroidtoUnityJSON.instance.game_fee + ", " +
@@ -607,10 +610,14 @@ public class NetworkClient : SocketIOComponent
     IEnumerator MatchFound()
     {
         WWWForm ww = new WWWForm();
-        ww.AddField("player_id", matchDetails.playerId[1]);
+        if (NetworkClient.instance.matchDetails.playerId[0] == int.Parse(AndroidtoUnityJSON.instance.player_id))
+            ww.AddField("player_id", matchDetails.playerId[1].ToString());
+        else
+            ww.AddField("player_id", matchDetails.playerId[0].ToString());
         ww.AddField("room_id", roomID);
         ww.AddField("game_mode", AndroidtoUnityJSON.instance.game_mode);
         ww.AddField("winning_details", GameManager.instance.GetScore(0));
+        ww.AddField("winning_score", GameManager.instance.GetScore(0));
         ww.AddField("game_end_time", GetSystemTime());
         ww.AddField("wallet_amt", AndroidtoUnityJSON.instance.game_fee);
         ww.AddField("game_id", AndroidtoUnityJSON.instance.game_id);

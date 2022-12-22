@@ -13,10 +13,10 @@ public class GameManager : MonoBehaviour
     public static event System.Action<bool> setKinematicForPieces = delegate { };
 
     //public string serverURL = "ws://3.7.19.73:5000/socket.io/?EIO=4&transport=websocket";
-    public string sendDataURL = "http://52.66.182.199/api/gameplay";
-    public string walletInfoURL = "http://52.66.182.199/api/wallet";
-    public string walletUpdateURL = "http://52.66.182.199/api/walletdeduction";
-    public string getTournAttemptURL = "https://admin.gamejoypro.com/api/getattempts";
+    public string sendDataURL;
+    public string matchFoundURL;
+    public string walletUpdateURL;
+    public string getTournAttemptURL;
 
 
     // Logs
@@ -144,6 +144,10 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        sendDataURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + sendDataURL;
+        matchFoundURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + matchFoundURL;
+        walletUpdateURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + walletUpdateURL;
+        getTournAttemptURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + getTournAttemptURL;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "free")
             gameMode = CommonValues.GameMode.FREESTYLE;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
@@ -226,6 +230,11 @@ public class GameManager : MonoBehaviour
         Random.InitState(42);
         this.enabled = false;
         isChatEnabled = true;
+    }
+
+    private void Start()
+    {
+
     }
 
     public void OnEnable()

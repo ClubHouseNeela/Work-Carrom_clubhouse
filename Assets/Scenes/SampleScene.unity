@@ -268,7 +268,7 @@ MonoBehaviour:
   PlayerGameName: {fileID: 640039877}
   OpponentGameName: {fileID: 984273019}
   back_btn: {fileID: 1754564011}
-  getTournAttemptURL: https://livegamejoypro.com/api/getattempts
+  getTournAttemptURL: api/getattempts
   walletUpdate:
     game_id: 
     amount: 
@@ -4224,7 +4224,7 @@ MonoBehaviour:
   PlayerGameName: {fileID: 0}
   OpponentGameName: {fileID: 0}
   back_btn: {fileID: 0}
-  getTournAttemptURL: https://admin.gamejoypro.com/api/getattempts
+  getTournAttemptURL: api/getattempts
   walletUpdate:
     game_id: 
     amount: 
@@ -8177,7 +8177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b55bcd7771a7c34b94538f0474ef4e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: ws://13.235.79.220:5000/socket.io/?EIO=4&transport=websocket
+  url: 
   autoConnect: 1
   localConnect: 0
   reconnectDelay: 2
@@ -8203,8 +8203,8 @@ MonoBehaviour:
   EndScreen: {fileID: 4499560316028275515}
   roomID: 
   gameID: 
-  MatchFoundURL: https://livegamejoypro.com/api/storeGameHistory
-  botListURL: https://livegamejoypro.com/api/botlist
+  MatchFoundURL: api/storeGameHistory
+  botListURL: api/botlist
   botList:
     status: 
     code: 
@@ -8245,7 +8245,7 @@ MonoBehaviour:
   isFirst: 1
   player_id: 228
   token: KweGxgJqbnRXRmYvrp7j3E1l2
-  game_fee: 19
+  game_fee: 0
   profile_image: https://picsum.photos/400
   user_name: 'John '
   battle_id: 26
@@ -13804,10 +13804,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b58b79443146ee547874e61a96dc0f8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sendDataURL: https://livegamejoypro.com/api/gameplay
-  walletInfoURL: https://livegamejoypro.com/api/wallet
-  walletUpdateURL: https://livegamejoypro.com/api/walletdeduction
-  getTournAttemptURL: https://livegamejoypro.com/api/getattempts
+  sendDataURL: api/gameplay
+  matchFoundURL: api/storeGameHistory
+  walletUpdateURL: api/walletdeduction
+  getTournAttemptURL: api/getattempts
   logs:
     logInfoList: []
   timerForTurn: 15
@@ -17076,8 +17076,8 @@ MonoBehaviour:
       bonus_amount: 
       coin_balance: 
   isDataSend: 0
-  sendDataURL: https://livegamejoypro.com/api/gameplay
-  walletCheckURL: https://livegamejoypro.com/api/checkWallet
+  sendDataURL: api/gameplay
+  walletCheckURL: api/checkWallet
 --- !u!224 &4499560316028275524
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20111,7 +20111,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 250, y: -140.80002}
+  m_AnchoredPosition: {x: 250, y: -140.80005}
   m_SizeDelta: {x: 398, y: 224}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5036807310541122213
@@ -22642,7 +22642,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -149, y: -189.49997}
+  m_AnchoredPosition: {x: -149, y: -189.5}
   m_SizeDelta: {x: 268.9, y: 340.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8491498716900114494
