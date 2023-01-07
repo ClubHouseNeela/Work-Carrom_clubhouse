@@ -21,16 +21,21 @@ public class MenuManager : MonoBehaviour
     leaveGamePopUp, optionsPopUp, loadingScreenIcon1, loadingScreenIcon2, chatPopUp;
 
     [SerializeField] private Image
-    playerProfilePicMatchMaking, opponentProfilePicMatchMaking, loadingScreenIcon1Image, loadingScreenIcon1SubImage, playerProfilePicGame, opponentProfilePicGame;
+    loadingScreenIcon1Image, loadingScreenIcon1SubImage;
 
-    [SerializeField] private RTLTextMeshPro
-    playerNameText, opponentNameText, loadingScreenText;
+    [SerializeField] private RTLTextMeshPro loadingScreenText;
 
     [SerializeField] private Sprite[]
     soundButtonSprites, chatEnabledSprites, toggleButtonSprites;
 
-    [SerializeField] private Button[]
-    emojis;
+    [SerializeField] private Button[] emojis;
+
+    [SerializeField] Image[] playerProfilePictures;
+    [SerializeField] Image[] opponentProfilePictures;
+    [SerializeField] Text[] playerNameTexts;
+    [SerializeField] Text[] opponentNameTexts;
+    [SerializeField] RTLTextMeshPro[] playerNameRTLTMPTexts;
+    [SerializeField] RTLTextMeshPro[] opponentNameRTLTMPTexts;
 
     private Sequence loadingScreenAnimations;
 
@@ -146,14 +151,12 @@ public class MenuManager : MonoBehaviour
         loadingScreenAnimations.SetAutoKill(false);
         loadingScreenAnimations.Pause();
 
-        // Temporary player and opponent names
-        // Set player name from the string provided by main app
-        playerNameText.text = "Player";
-        // Set opponent name from the string provided by node js server
-        opponentNameText.text = "Opponent";
-
-        // Do the same with player profile pic and opponent profile pic
     
+    }
+
+    private void Start()
+    {
+        SetThisPlayerDetail();
     }
 
     public void KeepPlaying()
@@ -203,6 +206,38 @@ public class MenuManager : MonoBehaviour
     {
         loadingScreenIcon2.gameObject.SetActive(true);
         loadingScreenAnimations.Pause();
+    }
+
+    #endregion
+
+    //--------------------------------------------------------------------------------------------------------------------------------------
+    
+    #region set player details
+
+    void SetThisPlayerDetail()
+    {
+        WebRequestHandler.Instance.DownloadSprite(AndroidtoUnityJSON.instance.profile_image, playerProfilePictures);
+        foreach (Text text in playerNameTexts)
+        {
+            text.text = AndroidtoUnityJSON.instance.user_name;
+        }
+        foreach (RTLTextMeshPro text in playerNameRTLTMPTexts)
+        {
+            text.text = AndroidtoUnityJSON.instance.user_name;
+        }
+    }
+
+    public void SetOpponentDetail()
+    {
+        WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[GameManager.instance.playerNumberOnline], opponentProfilePictures);
+        foreach (Text text in opponentNameTexts)
+        {
+            text.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+        }
+        foreach (RTLTextMeshPro text in opponentNameRTLTMPTexts)
+        {
+            text.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+        }
     }
 
     #endregion

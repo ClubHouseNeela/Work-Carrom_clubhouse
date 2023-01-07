@@ -89,7 +89,6 @@ public class NetworkClient : SocketIOComponent
 
             if (botList.data == null)
             {
-                GameManager.instance.ExitPop.SetActive(true);
                 StartCoroutine(StartQuit(2.0f));
                 noPlayer = true;
             }

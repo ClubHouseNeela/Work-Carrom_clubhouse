@@ -4,218 +4,61 @@ using UnityEngine;
 using UnityEngine.UI;
 using RTLTMPro;
 using DG.Tweening;
+using TMPro;
 
 public class MatchMakingUIManager : MonoBehaviour
 {
-    #region public and private fields 
-
     public static MatchMakingUIManager instance;
 
-    [SerializeField] public string
-    playerID, opponentID;
-
-    [SerializeField] private Image
-    playerImage, opponentImage, loadingIconImage, loadingCircleImage, playerGameImg, oppgameImg;
-
-    [SerializeField] public RTLTextMeshPro
-    playerMobileNumberText, opponentMobileNumberText, PlayerGameName, OpponentGameName;
-
-    private Color[] colourList = new Color[] { Color.cyan, Color.red, Color.magenta, Color.yellow, Color.green, Color.blue, Color.gray, Color.white };
-
-    private Sequence loadingIconSequence;
-
-    private const string glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    public GameObject back_btn;
-
-    public string getTournAttemptURL;
-    public WallUpdate walletUpdate;
-
-    #endregion
-
-    //------------------------------------------------------------------------------------------------------------------------------------------
-
-    #region get and set references, set animation sequences, set player names and image from main app and opponent name and image from node js server
-
-    private void Awake()
-    {
-        instance = this;
-        getTournAttemptURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + getTournAttemptURL;
-        //PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.PLAYER_MOBILE_NUMBER, playerID);
-    }
+    [SerializeField] string walletUpdateURL;
+    [SerializeField] RTLTextMeshPro searchingText;
 
     private void Start()
     {
-        if (GameManager.instance.gameMode == CommonValues.GameMode.LOCAL_MULTIPLAYER)
-        {
-            StartCoroutine(FakePause(Random.Range(3, 6)));
-        }
-        if (gameObject.activeInHierarchy)
-        {
-            // Assign profile images for player and opponent here
-
-            // Loading icon animation
-            loadingIconSequence = DOTween.Sequence();
-            float _fadeAmount = 1f;
-            loadingIconSequence.Append(loadingCircleImage.DOColor(colourList[0], 1f).SetEase(Ease.InOutSine).From(colourList[colourList.Length - 1]));
-            //loadingIconSequence.Join(loadingCircleImage.DOFade(_fadeAmount, 1f).SetEase(Ease.Linear).From(0));
-            for (int i = 1; i < colourList.Length; i++)
-            {
-                _fadeAmount = (i % 2 == 0) ? 1f : 0f;
-                loadingIconSequence.Append(loadingCircleImage.DOColor(colourList[i], 1f).SetEase(Ease.InOutSine));
-                //loadingIconSequence.Join(loadingCircleImage.DOFade(_fadeAmount, 1f).SetEase(Ease.Linear));
-            }
-            loadingIconSequence.SetDelay(0f).OnComplete(() => loadingIconSequence.Restart());
-
-            // Opponent mobile number generation
-            opponentID = "";
-            for (int i = 0; i < 10; i++)
-            {
-                opponentID += glyphs[Random.Range(0, glyphs.Length)];
-            }
-            //PlayerPrefs.SetString(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER, opponentID);
-            playerMobileNumberText.text = AndroidtoUnityJSON.instance.user_name;//playerID;
-            PlayerGameName.text = AndroidtoUnityJSON.instance.user_name;//playerID;
-            WebRequestHandler.Instance.DownloadSprite(AndroidtoUnityJSON.instance.profile_image, (sprite) =>
-            {
-                playerImage.sprite = sprite;
-                playerGameImg.sprite = sprite;
-            });
-            StartCoroutine(OpponentMobileNumberSearchCoroutine());
-        }
+        walletUpdateURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + walletUpdateURL;
+        StartCoroutine(TextAnimation(searchingText));
     }
 
-    #endregion
-
-    //------------------------------------------------------------------------------------------------------------------------------------------
-
-    #region testing for matchmaking screen
-
-    private IEnumerator FakePause(float time)
+    IEnumerator TextAnimation(RTLTextMeshPro textToAnimate)
     {
-        yield return new WaitForSecondsRealtime(time);
-        FakeMatchmakingForLocalMultiplayer();
-    }
-
-    private void FakeMatchmakingForLocalMultiplayer()
-    {
-        SetOpponentNumberText();
-        StartCoroutine(LocalMultiplayerStart());
-    }
-
-    private IEnumerator LocalMultiplayerStart()
-    {
-        yield return new WaitForSeconds(1f);
-        GameStart();
-        GameManager.instance.SetGameModeAndStart(0);
-    }
-
-
-    #endregion
-
-    //------------------------------------------------------------------------------------------------------------------------------------------
-
-    #region matchmaking screen animations
-
-    private IEnumerator OpponentMobileNumberSearchCoroutine()
-    {
-        yield return null;
-        opponentMobileNumberText.rectTransform.DOScale(Vector3.one * 1.5f, 0.5f).SetEase(Ease.OutQuart);
-        string _tempOpponentID;
+        string _tempOpponentID = textToAnimate.text + "...";
+        int size = textToAnimate.text.Length;
+        Debug.Log(size);
+        int temp = size;
         while (true)
         {
-            _tempOpponentID = "";
-            for (int i = 0; i < 10; i++)
+            yield return new WaitForSecondsRealtime(0.5f);
+            textToAnimate.text = _tempOpponentID.Substring(0, temp);
+            temp++;
+            if (temp > size + 3)
             {
-                _tempOpponentID += glyphs[Random.Range(0, glyphs.Length)];
+                temp = size;
             }
-            opponentMobileNumberText.text = _tempOpponentID;
-            yield return new WaitForSecondsRealtime(0.05f);
         }
     }
 
-    #endregion
-
-    //------------------------------------------------------------------------------------------------------------------------------------------
-
-    #region matched with opponent and game start
-
-    public void SetOpponentNumberText()
+    public void Matched(bool firstTurn, bool initialStart, int randomSeed)
     {
-        StopAllCoroutines();
-        opponentMobileNumberText.text = opponentID;
-
-        if (NetworkClient.instance.matchDetails.playerId[1] != 0)
+        Random.InitState(randomSeed);
+        if (initialStart)
         {
-            //if player
-            GameManager.instance.playerNumberOnline = 0;
-
-            if (NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline] == AndroidtoUnityJSON.instance.user_name)
-            {
-                GameManager.instance.playerNumberOnline = 1;
-            }
-
-            OpponentGameName.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
-            opponentMobileNumberText.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
-            
-            WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[GameManager.instance.playerNumberOnline], (sprite) =>
-            {
-                oppgameImg.sprite = sprite;
-                opponentImage.sprite = sprite;
-            });
-        }
-        else
-        {
-            //if bot
-            OpponentGameName.text = NetworkClient.instance.oppPlayerName;
-            opponentMobileNumberText.text = NetworkClient.instance.oppPlayerName;
-            WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.oppPlayerDp, (sprite) => 
-            { 
-                oppgameImg.sprite = sprite;
-                opponentImage.sprite = sprite;
-            });
-        }
-
-        opponentMobileNumberText.rectTransform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutQuart);
-
-        var attemptNo = GameManager.instance.attemptNo;
-        //attempt check
-        WebRequestHandler.Instance.Get(getTournAttemptURL + "/" + AndroidtoUnityJSON.instance.tour_id, (response, status) =>
-        {
-            GetAttempt attempt = JsonUtility.FromJson<GetAttempt>(response);
-
-            Debug.Log("Attempt(s) remaining: " + attempt.data.remainAttemp);
-
-            attemptNo = int.Parse(attempt.data.remainAttemp);
-            GameManager.instance.attemptNo = attemptNo;
-
-            if (attempt.data.remainAttemp == AndroidtoUnityJSON.instance.no_of_attempts)
-            {
-                AndroidtoUnityJSON.instance.isFirst = true;
-            }
-            else
-            {
-                AndroidtoUnityJSON.instance.isFirst = false;
-            }
-        });
-
-        if (AndroidtoUnityJSON.instance.game_mode == "tour")
-        {
-            //if (AndroidtoUnityJSON.instance.entry_type == "re entry" && AndroidtoUnityJSON.instance.isFirst ||
-            //    AndroidtoUnityJSON.instance.entry_type == "re entry paid" || AndroidtoUnityJSON.instance.entry_type == "single entry")
-            //{
-            //    DeductWallet();
-            //}
-        }
-        else
-        {
-            if(!NetworkClient.instance.noPlayer)
+            if (!NetworkClient.instance.noPlayer)
                 DeductWallet();
+            GameManager.instance.StartFromServer(firstTurn);
+            MenuManager.instance.SetOpponentDetail();
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            GameManager.instance.RejoinFromServer();
+            MenuManager.instance.SetOpponentDetail();
+            gameObject.SetActive(false);
         }
     }
 
     public void DeductWallet()
     {
+        WallUpdate walletUpdate = new WallUpdate();
         if (AndroidtoUnityJSON.instance.game_mode == "tour")
             walletUpdate.game_id = AndroidtoUnityJSON.instance.tour_id;
         else if (AndroidtoUnityJSON.instance.game_mode == "battle")
@@ -224,50 +67,9 @@ public class MatchMakingUIManager : MonoBehaviour
         walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
         walletUpdate.type = AndroidtoUnityJSON.instance.game_mode;
         string mydata = JsonUtility.ToJson(walletUpdate);
-        WebRequestHandler.Instance.Post(GameManager.instance.walletUpdateURL, mydata, (response, status) =>
+        WebRequestHandler.Instance.Post(walletUpdateURL, mydata, (response, status) =>
         {
             Debug.Log(response + " sent wallet update");
         });
     }
-
-    public void GameStart()
-    {
-        if (gameObject.activeInHierarchy)
-        {
-            loadingIconSequence.Kill();
-
-            if (!NetworkClient.instance.noPlayer)
-                gameObject.SetActive(false);
-        }
-
-        //Destroy(gameObject);
-    }
-
-    public void Matched(bool firstTurn, bool initialStart, int randomSeed)
-    {
-        Random.InitState(randomSeed);
-        if (initialStart)
-        {
-            back_btn.gameObject.SetActive(false);
-            Debug.Log("Player number in server: " + GameManager.instance.playerNumberOnline);
-            SetOpponentNumberText();
-            StartCoroutine(LoadingOver(firstTurn));
-        }
-        else
-        {
-            GameStart();
-            GameManager.instance.RejoinFromServer();
-        }
-    }
-
-    private IEnumerator LoadingOver(bool firstTurn)
-    {
-        yield return new WaitForSeconds(1f);
-        GameStart();
-        GameManager.instance.StartFromServer(firstTurn);
-    }
-
-    #endregion
-
-    //------------------------------------------------------------------------------------------------------------------------------------------
 }

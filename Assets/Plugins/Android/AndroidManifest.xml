@@ -10,7 +10,7 @@
                   android:theme="@style/UnityThemeSelector"
                   android:exported="true">
             <intent-filter>
-                <action android:name="com.unique.as.Carrom" />
+                <action android:name="com.clubhouse.as.Carrom" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />

@@ -4,6 +4,7 @@ using UnityEngine;
 using RTLTMPro;
 using DG.Tweening;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,11 +13,6 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public static event System.Action<bool> setKinematicForPieces = delegate { };
 
-    //public string serverURL = "ws://3.7.19.73:5000/socket.io/?EIO=4&transport=websocket";
-    public string sendDataURL;
-    public string matchFoundURL;
-    public string walletUpdateURL;
-    public string getTournAttemptURL;
 
 
     // Logs
@@ -69,6 +65,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject P1Chat;
     [SerializeField] private GameObject P2Chat;
     [SerializeField] private GameObject WarningMessage;
+    [SerializeField] private GameObject matchmakingScreen;
+    [SerializeField] private GameObject lobbyScreen;
     [SerializeField] private GameObject LeaderboardScreen;
     [SerializeField] private List<PieceScript> piecesOnBoard = new List<PieceScript>();
     [SerializeField] private int numberOfMovingPieces;
@@ -92,49 +90,16 @@ public class GameManager : MonoBehaviour
     private List<Vector2> piecePos = new List<Vector2>();
     private List<float> pieceRot = new List<float>();
     private bool oneMoreChance;
-    private bool isLocalPlayerWon;
     private bool redPieceFallenWithoutAdditionalPiece = false;
     private bool strikerInPocket = false;
     private bool queenHasFallen = false;
     private ContactFilter2D contactFilter = new ContactFilter2D();
 
 
-    public NetworkingPlayer thisPlayer;
-    private NetworkingPlayer otherPlayer;
-    public SendData sendThisPlayerData;
-    public WinningDetails winning_details;
-    public WalletInfo walletInfo;
-    public WallUpdate walletUpdate;
-    public bool foundOtherPlayer = false;
-    public bool canStartGame;
-    public string sendWinningDetailsData;
-    public string sendNewData1;
-    private string walletInfoData;
-    private string walletUpdateData;
-    // public bool canRemoveTouchBlock { get; private set; }
-
-    public bool foundWinner;
-    public bool isDataSend;
-    string myRoomId;
-    //public static GameManager instance;
-    //matchmaking Variable
-    [SerializeField] GameObject ReplayBtn;
-
-    //[SerializeField] public Image blocker;
     public bool isGameOver;
-    [SerializeField] GameObject NoBalPop;
-    public GameObject ExitPop;
-    //[SerializeField] GameObject P2;
-    [SerializeField] GameObject Footer_1;
-    [SerializeField] Text ChanceLeft;
-    [SerializeField] Text ReloadPrice;
-
-    private bool isReEntryPaid;
-    private bool isSingleEntry;
-
-
     //Testing variables
     private bool pieceHasFallen = false;
+
 
     #endregion
 
@@ -144,57 +109,10 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        sendDataURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + sendDataURL;
-        matchFoundURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + matchFoundURL;
-        walletUpdateURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + walletUpdateURL;
-        getTournAttemptURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + getTournAttemptURL;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "free")
             gameMode = CommonValues.GameMode.FREESTYLE;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
             gameMode = CommonValues.GameMode.BLACK_AND_WHITE;
-
-        if (AndroidtoUnityJSON.instance.game_mode == "tour")
-        {
-            if (AndroidtoUnityJSON.instance.mm_player == "2")
-            {
-                //P2.SetActive(true);
-
-                if (AndroidtoUnityJSON.instance.entry_type == "re entry paid")
-                {
-                    isReEntryPaid = true;
-                }
-                else if (AndroidtoUnityJSON.instance.entry_type == "re entry")
-                {
-                    isReEntryPaid = false;
-                }
-                else if (AndroidtoUnityJSON.instance.entry_type == "single entry")
-                {
-                    isSingleEntry = true;
-                }
-
-                //StartCoroutine(StartOnlinePlay());
-            }
-            else if (AndroidtoUnityJSON.instance.mm_player == "1")
-            {
-                //VS.SetActive(false);
-                //P2.SetActive(false);
-
-                if (AndroidtoUnityJSON.instance.entry_type == "re entry paid")
-                {
-                    isReEntryPaid = true;
-                }
-                else if (AndroidtoUnityJSON.instance.entry_type == "re entry")
-                {
-                    isReEntryPaid = false;
-                }
-                else if (AndroidtoUnityJSON.instance.entry_type == "single entry")
-                {
-                    isSingleEntry = true;
-                }
-
-                //StartCoroutine(StartOfflinePlay());
-            }
-        }
 
         Debug.Log("Game mode: " + gameMode);
 
@@ -481,8 +399,11 @@ public class GameManager : MonoBehaviour
         SetTurn(Turn);
     }
 
-    public void StartFromServer(bool value)
+    public IEnumerator StartFromServer(bool value)
     {
+        lobbyScreen.SetActive(true);
+        yield return new WaitForSecondsRealtime(1f);
+        lobbyScreen.SetActive(false);
         AudioManager.instance.BackgroundMusicStart();
         if (!value)
         {
@@ -754,6 +675,8 @@ public class GameManager : MonoBehaviour
             {
                 // Game Over you win
                 Debug.Log("You win");
+
+
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                 AudioManager.instance.Play("Win");
@@ -765,6 +688,8 @@ public class GameManager : MonoBehaviour
             {
                 // Game Over opponent won
                 Debug.Log("Opponent won");
+
+
                 AudioManager.instance.Play("Lose");
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
@@ -776,7 +701,7 @@ public class GameManager : MonoBehaviour
             {
                 if (p1Score == p2Score)
                 {
-                    // Game Over draw
+
                     AudioManager.instance.Play("Lose");
                     gameEndText.text = "DRAW";
                     NetworkClient.instance.SendPlayerDraw();
@@ -787,6 +712,8 @@ public class GameManager : MonoBehaviour
                 {
                     // Game Over you win
                     Debug.Log("You win");
+
+
                     gameEndText.text = "";
                     gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                     AudioManager.instance.Play("Win");
@@ -798,6 +725,8 @@ public class GameManager : MonoBehaviour
                 {
                     // Game Over opponent won
                     Debug.Log("Opponent won");
+
+
                     AudioManager.instance.Play("Lose");
                     gameEndText.text = "";
                     gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
@@ -812,6 +741,8 @@ public class GameManager : MonoBehaviour
             if (p1Score >= 9 && !queenHasFallen && Turn)
             {
                 Debug.Log("You lose");
+
+
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
                 AudioManager.instance.Play("Lose");
@@ -822,6 +753,8 @@ public class GameManager : MonoBehaviour
             if (p2Score >= 9 && !queenHasFallen)
             {
                 Debug.Log("You win");
+
+
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                 AudioManager.instance.Play("Win");
@@ -833,6 +766,9 @@ public class GameManager : MonoBehaviour
             if (p1Score >= 9 || (p1Score >= 9 && !queenHasFallen && !Turn))
             {
                 Debug.Log("You win");
+
+
+
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
                 AudioManager.instance.Play("Win");
@@ -843,6 +779,8 @@ public class GameManager : MonoBehaviour
             else if(p2Score >= 9)
             {
                 Debug.Log("Opponent Won");
+
+
                 AudioManager.instance.Play("Lose");
                 gameEndText.text = "";
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
@@ -851,10 +789,16 @@ public class GameManager : MonoBehaviour
             }
         }
         return false;
+
+
+
     }
 
     public void GameOver(bool isWon)
     {
+
+        
+
         gameOver = true;
         gameStarted = false;
         BotManager.instance.StopAllCoroutines();
@@ -878,45 +822,6 @@ public class GameManager : MonoBehaviour
             //Time.timeScale = 0f;
         }
 
-        if (AndroidtoUnityJSON.instance.game_mode == "tour" && AndroidtoUnityJSON.instance.entry_type == "single entry")
-        {
-            ChanceLeft.gameObject.SetActive(false);
-            ReplayBtn.transform.parent.gameObject.SetActive(false);
-            Footer_1.SetActive(true);
-        }
-        else if (AndroidtoUnityJSON.instance.game_mode == "tour")
-        {
-            if (attemptNo <= 0)
-            {
-                ReplayBtn.transform.parent.gameObject.SetActive(false);
-                Footer_1.SetActive(true);
-            }
-
-            ChanceLeft.gameObject.SetActive(true);
-            ChanceLeft.text = "Chances Left: " + attemptNo;
-        }
-        else if (AndroidtoUnityJSON.instance.game_mode == "battle")
-        {
-            ChanceLeft.gameObject.SetActive(false);
-        }
-
-
-
-        //if (AndroidtoUnityJSON.instance.mm_player == "1")
-        //{
-        //    LosserNameText.transform.parent.gameObject.SetActive(false);
-        //}
-
-
-
-        if (float.Parse(AndroidtoUnityJSON.instance.game_fee) <= 0 || AndroidtoUnityJSON.instance.entry_type == "re entry" && AndroidtoUnityJSON.instance.game_mode == "tour")
-        {
-            ReloadPrice.text = "FREE";
-        }
-        else
-        {
-            ReloadPrice.text = /* "?" +*/ AndroidtoUnityJSON.instance.game_fee;
-        }
 
         LeaderboardScreen.SetActive(true);
 
@@ -1495,34 +1400,4 @@ public class GameManager : MonoBehaviour
         Application.logMessageReceived -= LogCallback;
     }
 
-    public void DeductWallet()
-    {
-
-
-        walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
-        //  GlobalWalletBalance += int.Parse(AndroidtoUnityJSON.instance.game_fee);
-
-        //else//-
-        //{
-        //    walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
-        //    GlobalWalletBalance += int.Parse(AndroidtoUnityJSON.instance.game_fee);
-        //}
-
-        walletUpdate.game_id = AndroidtoUnityJSON.instance.game_id;
-        walletUpdate.type = AndroidtoUnityJSON.instance.game_mode;
-
-        string mydata = JsonUtility.ToJson(walletUpdate);
-        WebRequestHandler.Instance.Post(walletUpdateURL, mydata, (response, status) =>
-        {
-            Debug.Log(response + " sent wallet update");
-        });
-
-        //check balance
-        //WebRequestHandler.Instance.Post(walletInfoURL, walletInfoData, (response, status) =>
-        //{
-        //    WalletInfo walletInfoResponse = JsonUtility.FromJson<WalletInfo>(response);
-        //    GlobalWalletBalance = int.Parse(walletInfoResponse.data.cash_balance);
-        //    Debug.Log(GlobalWalletBalance + " <= updated balance");
-        //});
-    }
 }

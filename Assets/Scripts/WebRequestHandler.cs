@@ -5,6 +5,7 @@ using System.Net;
 using System.IO;
 using System;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class WebRequestHandler : MonoBehaviour
 {
@@ -77,6 +78,11 @@ public class WebRequestHandler : MonoBehaviour
     {
         StartCoroutine(LoadFromWeb(url, OnDownloadComplete));
     }
+    
+    public void DownloadSprite(string url, Image[] images)
+    {
+        StartCoroutine(LoadFromWeb(url, images));
+    }
 
     public void DownloadTexture(string url, Action<Texture> OnDownloadComplete)
     {
@@ -110,6 +116,31 @@ public class WebRequestHandler : MonoBehaviour
             Texture2D texture = textureDownloader.texture;
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero, 1f);
             OnDownloadComplete(sprite);
+        }
+        else
+        {
+            Debug.LogError("failed to download image");
+        }
+    }
+
+    IEnumerator LoadFromWeb(string url, Image[] images)
+    {
+        UnityWebRequest webRequest = new UnityWebRequest(url);
+        DownloadHandlerTexture textureDownloader = new DownloadHandlerTexture(true);
+        webRequest.downloadHandler = textureDownloader;
+        yield return webRequest.SendWebRequest();
+        if (!(webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError))
+        {
+            Texture2D texture = textureDownloader.texture;
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero, 1f);
+            foreach (var image in images)
+            {
+                image.sprite = sprite;
+                image.rectTransform.anchorMin = Vector2.zero;
+                image.rectTransform.anchorMax = Vector2.one;
+                image.rectTransform.offsetMin = Vector2.zero;
+                image.rectTransform.offsetMax = Vector2.zero;
+            }
         }
         else
         {

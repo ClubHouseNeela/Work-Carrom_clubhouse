@@ -59,7 +59,7 @@ public class AudioManager : MonoBehaviour
     public void BackgroundMusicStart()
     {
         //Play("BackgroundMusic", 1f);
-        //StartCoroutine(BackgroundMusicDelayStart());
+        StartCoroutine(BackgroundMusicDelayStart());
     }
 
     private IEnumerator BackgroundMusicDelayStart()

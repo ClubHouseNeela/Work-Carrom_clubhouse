@@ -2,6 +2,7 @@ using DG.Tweening;
 using RTLTMPro;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,28 +12,24 @@ public class LeaderboardUIManager : MonoBehaviour
     #region public and private fields 
 
     public static LeaderboardUIManager instance;
+    public Transform myScoreParent;
+    public Transform opponentScoreParent;
+    public Text myScoreOnScoreboard;
+    public Text opponentScoreOnScroeboard;
+    public Text myRankOnScoreboard;
+    public Text opponentRankOnScoreboard;
+    public TMP_Text gameOverLable;
+    public Color winnerScoreColor;
+    public GameObject winPanel;
+    public GameObject losePanel;
+    private Vector3 winnerScoreParentPosition;
+    private Vector3 loserScoreParentPosition;
 
-    private string WalletInfoData;
-    public bool canRestart = false;
-    public GameObject NoBalPop, Footer_1, Footer;
-
-    private string
-    playerID, opponentID;
-
-    public Text
-    winPlayerName, loosePlayerName, winScore, looseScore, mainRank, mainScore, titleMsg, chancesLeft;
-
-    private string walletUpdateData;
-    private string walletCheckData;
-    public WalletCheck walletCheck;
-    public WalletCheckPost walletCheckPost;
     public SendData sendThisPlayerData;
     public WinningDetails winningDetails;
-    public WalletInfo walletInfo;
     public bool isDataSend;
 
     public string sendDataURL;
-    public string walletCheckURL;
 
     #endregion
 
@@ -44,25 +41,10 @@ public class LeaderboardUIManager : MonoBehaviour
     {
         instance = this;
         sendDataURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + sendDataURL;
-        walletCheckURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + walletCheckURL;
     }
 
     public void SetLeaderboardData(bool isWon)
     {
-        if (AndroidtoUnityJSON.instance.game_mode == "tour")
-        {
-            Footer.SetActive(false);
-            Footer_1.SetActive(true);
-
-            chancesLeft.text = GameManager.instance.attemptNo.ToString();
-            chancesLeft.gameObject.SetActive(true);
-        }
-        else
-        {
-            Footer.SetActive(true);
-            Footer_1.SetActive(false);
-            chancesLeft.gameObject.SetActive(false);
-        }
 
         var botindex = 0;
 
@@ -71,22 +53,19 @@ public class LeaderboardUIManager : MonoBehaviour
             botindex = 1;
         }
 
-        winPlayerName.transform.parent.transform.GetChild(0).transform.gameObject.SetActive(false);
-        loosePlayerName.transform.parent.transform.GetChild(0).transform.gameObject.SetActive(false);
+        myScoreOnScoreboard.text = GameManager.instance.GetScore(0).ToString();
+        opponentScoreOnScroeboard.text = GameManager.instance.GetScore(1).ToString();
+        winnerScoreParentPosition = myScoreParent.localPosition;
+        loserScoreParentPosition = opponentScoreParent.localPosition;
 
         if (isWon)
         {
-            winPlayerName.text = MatchMakingUIManager.instance.playerMobileNumberText.text;
-            loosePlayerName.text = MatchMakingUIManager.instance.opponentMobileNumberText.text;
 
-            winScore.text = GameManager.instance.GetScore(0).ToString();
-            mainScore.text = GameManager.instance.GetScore(0).ToString();
-            looseScore.text = GameManager.instance.GetScore(1).ToString();
-
-            mainRank.text = "1";
-
-            titleMsg.text = "YOU WON";
-
+            //winScore.text = GameManager.instance.GetScore(0).ToString();
+            //mainScore.text = GameManager.instance.GetScore(0).ToString();
+            //looseScore.text = GameManager.instance.GetScore(1).ToString();
+            //gameoverlable
+            AudioManager.instance.Play("Cheering", 1f);
             sendThisPlayerData.game_status = "WIN";
             
             sendThisPlayerData.room_id = NetworkClient.instance.roomID;
@@ -97,20 +76,24 @@ public class LeaderboardUIManager : MonoBehaviour
             sendThisPlayerData.winning_details.lossingPlayerScore = GameManager.instance.GetScore(1).ToString();
             sendThisPlayerData.winning_details.lossingPlayerID = NetworkClient.instance.matchDetails.playerId[botindex].ToString();
 
+            gameOverLable.text = "You Won";
+            myScoreParent.GetComponent<Image>().color = winnerScoreColor;
+            myRankOnScoreboard.text = "1";
+            opponentRankOnScoreboard.text = "2";
+            winPanel.SetActive(true);
+
             sendThisPlayerData.game_end_time = GetSystemTime();
         }
         else
         {
-            winPlayerName.text = MatchMakingUIManager.instance.opponentMobileNumberText.text;
-            loosePlayerName.text = MatchMakingUIManager.instance.playerMobileNumberText.text;
 
-            winScore.text = GameManager.instance.GetScore(1).ToString();
-            mainScore.text = GameManager.instance.GetScore(1).ToString();
-            looseScore.text = GameManager.instance.GetScore(0).ToString();
+            //winScore.text = GameManager.instance.GetScore(1).ToString();
+            //mainScore.text = GameManager.instance.GetScore(1).ToString();
+            //looseScore.text = GameManager.instance.GetScore(0).ToString();
 
-            mainRank.text = "2";
+            //mainRank.text = "2";
 
-            titleMsg.text = "YOU LOSE";
+            //titleMsg.text = "YOU LOSE";
 
             sendThisPlayerData.game_status = "LOST";
                      
@@ -121,6 +104,15 @@ public class LeaderboardUIManager : MonoBehaviour
             sendThisPlayerData.winning_details.winningPlayerID = NetworkClient.instance.matchDetails.playerId[botindex].ToString();
             sendThisPlayerData.winning_details.lossingPlayerScore = GameManager.instance.GetScore(0).ToString();
             sendThisPlayerData.winning_details.lossingPlayerID = AndroidtoUnityJSON.instance.player_id;
+
+            gameOverLable.text = "Try Again";
+            myScoreParent.localPosition = loserScoreParentPosition;
+            opponentScoreParent.localPosition = winnerScoreParentPosition;
+            myScoreParent.GetComponent<Image>().color = Color.white;
+            opponentScoreParent.GetComponent<Image>().color = winnerScoreColor;
+            myRankOnScoreboard.text = "2";
+            opponentRankOnScoreboard.text = "1";
+            losePanel.SetActive(true);
 
             sendThisPlayerData.game_end_time = GetSystemTime();
         }
@@ -147,37 +139,6 @@ public class LeaderboardUIManager : MonoBehaviour
         });
 
         isDataSend = true;
-    }
-
-    public void Reload()
-    {
-        //wallet check
-        bool balance = false;
-
-        walletCheckPost.game_id = AndroidtoUnityJSON.instance.game_id;
-        walletCheckPost.type = AndroidtoUnityJSON.instance.game_mode;
-
-        if (AndroidtoUnityJSON.instance.game_mode == "tour")
-            walletCheckPost.tournament_battle_id = AndroidtoUnityJSON.instance.tour_id;
-        else if (AndroidtoUnityJSON.instance.game_mode == "battle")
-            walletCheckPost.tournament_battle_id = AndroidtoUnityJSON.instance.battle_id;
-
-        string walletCheckPostData = JsonUtility.ToJson(walletCheckPost);
-        WebRequestHandler.Instance.Post(walletCheckURL, walletCheckPostData, (response, status) =>
-        {
-            WalletCheck walletCheckResponse = JsonUtility.FromJson<WalletCheck>(response);
-            balance = bool.Parse(walletCheckResponse.status);
-            //Debug.Log(balance + " <= replay check balance");
-
-            if (balance)
-            {
-                SceneManager.LoadScene(0, LoadSceneMode.Single);
-            }
-            else
-            {
-                NoBalPop.SetActive(true);
-            }
-        });
     }
 
     public void Exit()
