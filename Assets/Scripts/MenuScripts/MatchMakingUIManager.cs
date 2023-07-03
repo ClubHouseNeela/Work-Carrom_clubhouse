@@ -13,9 +13,19 @@ public class MatchMakingUIManager : MonoBehaviour
     [SerializeField] string walletUpdateURL;
     [SerializeField] RTLTextMeshPro searchingText;
 
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("More then 1 MatchmakingUIManager");
+        }
+        instance = this;
+    }
+
     private void Start()
     {
-        walletUpdateURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + walletUpdateURL;
+        walletUpdateURL = NetworkClient.instance.adminURL + walletUpdateURL;
+        AudioManager.instance.Play("Matchmaking");
         StartCoroutine(TextAnimation(searchingText));
     }
 
@@ -46,14 +56,14 @@ public class MatchMakingUIManager : MonoBehaviour
                 DeductWallet();
             GameManager.instance.StartFromServer(firstTurn);
             MenuManager.instance.SetOpponentDetail();
-            gameObject.SetActive(false);
         }
         else
         {
             GameManager.instance.RejoinFromServer();
             MenuManager.instance.SetOpponentDetail();
-            gameObject.SetActive(false);
         }
+        AudioManager.instance.Stop("Matchmaking");
+        gameObject.SetActive(false);
     }
 
     public void DeductWallet()
@@ -64,6 +74,7 @@ public class MatchMakingUIManager : MonoBehaviour
         else if (AndroidtoUnityJSON.instance.game_mode == "battle")
             walletUpdate.game_id = AndroidtoUnityJSON.instance.battle_id;
 
+        walletUpdate.user_id = AndroidtoUnityJSON.instance.player_id;
         walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
         walletUpdate.type = AndroidtoUnityJSON.instance.game_mode;
         string mydata = JsonUtility.ToJson(walletUpdate);

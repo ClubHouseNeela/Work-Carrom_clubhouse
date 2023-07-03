@@ -40,7 +40,11 @@ public class LeaderboardUIManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        sendDataURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + sendDataURL;
+    }
+
+    private void Start()
+    {
+        sendDataURL = NetworkClient.instance.adminURL + sendDataURL;
     }
 
     public void SetLeaderboardData(bool isWon)
@@ -123,6 +127,7 @@ public class LeaderboardUIManager : MonoBehaviour
             sendThisPlayerData.player_id = NetworkClient.instance.matchDetails.playerId[0].ToString();
         sendThisPlayerData.wallet_amt = AndroidtoUnityJSON.instance.game_fee.ToString();
         sendThisPlayerData.game_mode = AndroidtoUnityJSON.instance.game_mode;
+        sendThisPlayerData.user_id = AndroidtoUnityJSON.instance.player_id;
         sendThisPlayerData.game_id = AndroidtoUnityJSON.instance.game_id;
         sendThisPlayerData.id = NetworkClient.instance.gameID;
 

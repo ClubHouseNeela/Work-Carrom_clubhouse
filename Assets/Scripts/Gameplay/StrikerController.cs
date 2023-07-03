@@ -593,6 +593,7 @@ public class StrikerController : MonoBehaviour
         validSpot = false;
 
         AudioManager.instance.Play("StrikerShoot");
+        AudioManager.instance.Play("StrickerShootVoiceOver");
     }
 
     public void StrikerShootFromServer(Vector2 force, Vector2 position, float rotation)

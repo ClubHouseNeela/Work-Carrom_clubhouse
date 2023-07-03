@@ -51,6 +51,7 @@ public class WalletInfoData
 [Serializable]
 public class WallUpdate
 {
+    public string user_id;
     public string game_id;
     public string amount;
     public string type;
@@ -59,6 +60,7 @@ public class WallUpdate
 [Serializable]
 public class SendData
 {
+    public string user_id;
     public string player_id;
     public string room_id;
     public string game_mode;

@@ -229,14 +229,20 @@ public class MenuManager : MonoBehaviour
 
     public void SetOpponentDetail()
     {
-        WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[GameManager.instance.playerNumberOnline], opponentProfilePictures);
+        int botindex = 0;
+
+        if (NetworkClient.instance.matchDetails.playerName[0] == AndroidtoUnityJSON.instance.user_name)
+        {
+            botindex = 1;
+        }
+        WebRequestHandler.Instance.DownloadSprite(NetworkClient.instance.matchDetails.playerDp[botindex], opponentProfilePictures);
         foreach (Text text in opponentNameTexts)
         {
-            text.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+            text.text = NetworkClient.instance.matchDetails.playerName[botindex];
         }
         foreach (RTLTextMeshPro text in opponentNameRTLTMPTexts)
         {
-            text.text = NetworkClient.instance.matchDetails.playerName[GameManager.instance.playerNumberOnline];
+            text.text = NetworkClient.instance.matchDetails.playerName[botindex];
         }
     }
 

@@ -38,7 +38,7 @@ public class NetworkClient : SocketIOComponent
     private bool isLeft = false;
     public string gameID;
 
-
+    public string adminURL;
     public string MatchFoundURL;
     public string botListURL;
     public BotList botList;
@@ -74,8 +74,8 @@ public class NetworkClient : SocketIOComponent
 
     public override void Start()
     {
-        MatchFoundURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + MatchFoundURL;
-        botListURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL) + botListURL;
+        MatchFoundURL = adminURL + MatchFoundURL;
+        botListURL = adminURL + botListURL;
         Debug.Log("android data => " +
             AndroidtoUnityJSON.instance.player_id + ", " + AndroidtoUnityJSON.instance.token + ", " + AndroidtoUnityJSON.instance.user_name + ", " +
             AndroidtoUnityJSON.instance.game_id + ", " + AndroidtoUnityJSON.instance.profile_image + ", " + AndroidtoUnityJSON.instance.game_fee + ", " +
@@ -83,12 +83,13 @@ public class NetworkClient : SocketIOComponent
             AndroidtoUnityJSON.instance.tour_mode + ", " + AndroidtoUnityJSON.instance.tour_name + ", " + AndroidtoUnityJSON.instance.no_of_attempts + ", " +
             AndroidtoUnityJSON.instance.mm_player + ", " + AndroidtoUnityJSON.instance.entry_type + ", " + AndroidtoUnityJSON.instance.multiplayer_game_mode);
 
-        WebRequestHandler.Instance.Get(botListURL, (response, status) =>
+        WebRequestHandler.Instance.Post(botListURL, "{\"user_id\":\"" + AndroidtoUnityJSON.instance.player_id + "\"}", (response, status) =>
         {
             botList = JsonUtility.FromJson<BotList>(response);
 
             if (botList.data == null)
             {
+                //GameManager.instance.ExitPop.SetActive(true);
                 StartCoroutine(StartQuit(2.0f));
                 noPlayer = true;
             }
@@ -195,12 +196,12 @@ public class NetworkClient : SocketIOComponent
             }
 
             // Join particular room here in case of private room when room is provided by main app
-            
+
         });
 
         On("OpponentStrikerPositionChanged", (E) =>
         {
-            StrikerController.instance.sliders[1].value=(1f - (float.Parse(E.data.list[0].ToString())/10000f));
+            StrikerController.instance.sliders[1].value = (1f - (float.Parse(E.data.list[0].ToString()) / 10000f));
         });
 
         On("ReceiveEmoji", (E) =>
@@ -262,8 +263,8 @@ public class NetworkClient : SocketIOComponent
 
             GameManager.instance.hasBot = bool.Parse(E.data["hasBot"].ToString());
             GameManager.instance.enabled = true;
-            
-            MatchMakingUIManager.instance.Matched(matchDetails.firstTurn,matchDetails.initialStart, (int)matchDetails.randomSeed);
+
+            MatchMakingUIManager.instance.Matched(matchDetails.firstTurn, matchDetails.initialStart, (int)matchDetails.randomSeed);
             StartCoroutine(MatchFound());
         });
 
@@ -274,7 +275,7 @@ public class NetworkClient : SocketIOComponent
             TimerScript.instance.TimerUpdateFromServer(int.Parse(E.data.list[0].ToString()));
         });*/
 
-       
+
         On("BlackAndWhiteModeStartGame", (E) =>
         {
             Debug.Log("Server signal to start game for Black and white mode  " + E.data);
@@ -318,7 +319,7 @@ public class NetworkClient : SocketIOComponent
 
             // Increment turn and continue game
             GameManager.instance.ResumeGame(GameManager.instance.Turn, bool.Parse(E.data.list[1].ToString()));
-            
+
         });
 
         On("SetScore", (E) =>
@@ -467,7 +468,7 @@ public class NetworkClient : SocketIOComponent
 
     public void SendStrikerPositionChangeSignal(float sliderValue)
     {
-        json = new JSONObject((ushort)(sliderValue*10000f));
+        json = new JSONObject((ushort)(sliderValue * 10000f));
         Emit("PlayerStrikerPositionChanged", json);
     }
 
@@ -493,13 +494,13 @@ public class NetworkClient : SocketIOComponent
     {
         Emit("SetTurn");
     }
-    public void SendMatchData(List<Vector2> pos, List<float> rot,bool queenHasFallen, byte numPiecesFallen,bool[] piecesFallen, byte[] lastPiecesFallen, Vector2[] lastPocketPos,bool playerNumber, bool redPieceFallenWithoutOtherPiece)
+    public void SendMatchData(List<Vector2> pos, List<float> rot, bool queenHasFallen, byte numPiecesFallen, bool[] piecesFallen, byte[] lastPiecesFallen, Vector2[] lastPocketPos, bool playerNumber, bool redPieceFallenWithoutOtherPiece)
     {
         List<Vector2> vectors = new List<Vector2>();
         List<float> rotations = new List<float>();
 
         matchData.pieces.Clear();
-        for(int i = 0; i < pos.Count;i++)
+        for (int i = 0; i < pos.Count; i++)
         {
             matchData.pieces.Add(new PieceInfo());
             matchData.pieces[i].xPos = (pos[i].x);// * 1000) / 1000;
@@ -514,7 +515,7 @@ public class NetworkClient : SocketIOComponent
         matchData.queenHasFallen = queenHasFallen;
         matchData.numPiecesFallen = numPiecesFallen;
         matchData.lastPiecesFallen = lastPiecesFallen;
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
             matchData.lastPocketPos[i].xPos = lastPocketPos[i].x;
             matchData.lastPocketPos[i].yPos = lastPocketPos[i].y;
@@ -609,6 +610,7 @@ public class NetworkClient : SocketIOComponent
     IEnumerator MatchFound()
     {
         WWWForm ww = new WWWForm();
+        ww.AddField("user_id", AndroidtoUnityJSON.instance.player_id);
         if (NetworkClient.instance.matchDetails.playerId[0] == int.Parse(AndroidtoUnityJSON.instance.player_id))
             ww.AddField("player_id", matchDetails.playerId[1].ToString());
         else
@@ -641,7 +643,7 @@ public class NetworkClient : SocketIOComponent
                 var myJsonString = (response["data"]);
                 var id = myJsonString["id"].ToString();
                 gameID = id;
-                Debug.Log("Match URL data upload complete! " );
+                Debug.Log("Match URL data upload complete! ");
             }
         }
     }
@@ -743,7 +745,7 @@ public class NetworkClient : SocketIOComponent
 
             LeaderboardUIManager.instance.isDataSend = true;
         }
-    
+
 
         // Save logs at persistent data path in android
         DataSaver.saveData(GameManager.instance.logs, "BountyBunchCarrom_savelog");
@@ -755,7 +757,7 @@ public class NetworkClient : SocketIOComponent
         }
 
         // Save room and player details
-        if(!isLeft)
+        if (!isLeft)
             SetPlayerPrefs();
     }
 
@@ -769,7 +771,7 @@ public class NetworkClient : SocketIOComponent
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.NEED_TO_RECONNECT, 1);
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.PLAYER_COLOUR, (int)GameManager.instance.pieceTargetColour);
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.PLAYER_NUMBER, (int)GameManager.instance.playerNumberOnline);
-            PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.COLOURS_FLIPPED, GameManager.instance.coloursFlipped? 1:0);
+            PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.COLOURS_FLIPPED, GameManager.instance.coloursFlipped ? 1 : 0);
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.HAS_BOT, GameManager.instance.hasBot ? 1 : 0);
             //PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.OPPONENT_MOBILE_NUMBER,MatchMakingUIManager.instance.opponentID );
             PlayerPrefs.SetInt(CommonValues.PlayerPrefKeys.RANDOM_SEED, matchDetails.randomSeed);

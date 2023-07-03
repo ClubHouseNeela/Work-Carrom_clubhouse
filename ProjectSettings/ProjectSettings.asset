@@ -259,7 +259,7 @@ PlayerSettings:
   AndroidEnableTango: 0
   androidEnableBanner: 1
   androidUseLowAccuracyLocation: 0
-  androidUseCustomKeystore: 1
+  androidUseCustomKeystore: 0
   m_AndroidBanners:
   - width: 320
     height: 180
@@ -762,7 +762,7 @@ PlayerSettings:
     Game Performance: 1
     Purchasing: 0
     UDP: 0
-    Unity Ads: 0
+    Unity Ads: 1
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -777,11 +777,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: acab17bd-5ee6-4b94-acca-efa716fc3d8d
+  cloudProjectId: 582b5cf1-c556-472c-b6bc-d261e4406a00
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Carrom
-  organizationId: gamejoypro
+  projectName: Clubhouse
+  organizationId: games_unity966
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   virtualTexturingSupportEnabled: 0

@@ -2,8 +2,8 @@
     "m_SelectedDeviceId": "RFCT40ZJFZP",
     "m_SelectedPackage": {
         "deviceId": "RFCT40ZJFZP",
-        "name": "com.gamejoypro.carrom",
-        "processId": 11431,
+        "name": "com.clubhouse.SkatingRace",
+        "processId": 13325,
         "exited": false
     },
     "m_SelectedPriority": 1,
@@ -137,24 +137,6 @@
         {
             "deviceId": "RFCT40ZJFZP",
             "name": "com.gamejoypro.carrom",
-            "processId": 21649,
-            "exited": true
-        },
-        {
-            "deviceId": "RFCT40ZJFZP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 9836,
-            "exited": true
-        },
-        {
-            "deviceId": "RFCT40ZJFZP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 14137,
-            "exited": true
-        },
-        {
-            "deviceId": "RFCT40ZJFZP",
-            "name": "com.gamejoypro.carrom",
             "processId": 5670,
             "exited": true
         },
@@ -162,13 +144,25 @@
             "deviceId": "RFCT40ZJFZP",
             "name": "com.gamejoypro.carrom",
             "processId": 11431,
-            "exited": false
+            "exited": true
         },
         {
-            "deviceId": "RZ8NA0C9F5N",
-            "name": "com.gamejoypro.games",
-            "processId": 17376,
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.tmkoc.clubhouse",
+            "processId": 27124,
             "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.clubhouse.carrom",
+            "processId": 31779,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.clubhouse.SkatingRace",
+            "processId": 13325,
+            "exited": false
         },
         {
             "deviceId": "RZ8NA0C9F5N",
@@ -180,7 +174,7 @@
             "deviceId": "RZ8NA0C9F5N",
             "name": "com.gamejoypro.games",
             "processId": 31649,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "RZ8NA0C9F5N",
@@ -192,6 +186,18 @@
             "deviceId": "RZ8NA0C9F5N",
             "name": "com.gamejoypro.carrom",
             "processId": 7942,
+            "exited": true
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.tmkoc.clubhouse",
+            "processId": 25207,
+            "exited": false
+        },
+        {
+            "deviceId": "RZ8NA0C9F5N",
+            "name": "com.clubhouse.carrom",
+            "processId": 27543,
             "exited": false
         }
     ],

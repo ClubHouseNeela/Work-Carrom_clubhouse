@@ -97,7 +97,7 @@ namespace SocketIO
 			{
 				url = "ws://127.0.0.1:5000/socket.io/?EIO=4&transport=websocket";
 			}
-			url = "ws://" + PlayerPrefs.GetString(Constants.FETCH_SERVER_URL) + "/socket.io/?EIO=4&transport=websocket";
+			//url = "ws://13.232.205.112/socket.io/?EIO=4&transport=websocket";
             encoder = new Encoder();
 			decoder = new Decoder();
 			parser = new Parser();
@@ -181,7 +181,6 @@ namespace SocketIO
 
 			socketThread = new Thread(RunSocketThread);
 			socketThread.Start(ws);
-
 			pingThread = new Thread(RunPingThread);
 			pingThread.Start(ws);
 		}
@@ -255,8 +254,9 @@ namespace SocketIO
 			while(connected){
 				if(webSocket.IsConnected){
 					Thread.Sleep(reconnectDelay);
-				} else {
-					webSocket.Connect();
+				} else
+                {
+                    webSocket.Connect();
 				}
 			}
 			webSocket.Close();
