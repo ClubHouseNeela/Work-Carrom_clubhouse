@@ -4353,7 +4353,7 @@ MonoBehaviour:
     audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
   - name: BackgroundMusic
     clip: {fileID: 8300000, guid: fc8487b686512b945a99e214eda74f78, type: 3}
-    volume: 0.5
+    volume: 0.18
     pitch: 1
     loop: 1
     source: {fileID: 0}
@@ -4379,6 +4379,20 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
     audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
+  - name: BlackOrWhitePocket3
+    clip: {fileID: 8300000, guid: 4ae228cd58b3d3249aff229f102c643f, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+    audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
+  - name: BlackOrWhitePocket4
+    clip: {fileID: 8300000, guid: 6ee2ba2435d461c4783a37c140931bed, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+    audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
   - name: QueenPocket
     clip: {fileID: 8300000, guid: fe26974c38ff4894881c67c5b2659712, type: 3}
     volume: 1
@@ -4393,18 +4407,25 @@ MonoBehaviour:
     loop: 0
     source: {fileID: 0}
     audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
-  - name: StrickerShootVoiceOver
-    clip: {fileID: 8300000, guid: c584ced827b73934f927516d86ab32be, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
-    audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
   - name: Matchmaking
     clip: {fileID: 8300000, guid: d3e732e6535d6e04c9a2afffdb9f143b, type: 3}
     volume: 0.75
     pitch: 1
     loop: 1
+    source: {fileID: 0}
+    audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
+  - name: Miss1
+    clip: {fileID: 8300000, guid: f04112fcef72fb24c8301ff0a736fd07, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+    audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
+  - name: Miss2
+    clip: {fileID: 8300000, guid: 0af621a79d05e514ca0a71cdf44fca4f, type: 3}
+    volume: 0.75
+    pitch: 1
+    loop: 0
     source: {fileID: 0}
     audioMixerGroup: {fileID: 24300002, guid: b99feedfaa9cac64096061f078831038, type: 2}
 --- !u!4 &460408114

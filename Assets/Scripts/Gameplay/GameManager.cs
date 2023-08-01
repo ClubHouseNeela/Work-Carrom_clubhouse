@@ -130,6 +130,7 @@ public class GameManager : MonoBehaviour
     //Testing variables
     private bool pieceHasFallen = false;
 
+    private bool isMiss = true;
     #endregion
 
     //------------------------------------------------------------------------------------------------------------------------------------------
@@ -1001,6 +1002,11 @@ public class GameManager : MonoBehaviour
                 }
                 SetTurn(Turn);
             }
+            if (isMiss)
+            {
+                AudioManager.instance.Play("Miss" + Random.Range(1, 3));
+            }
+            isMiss = true;
         }
 
     }
@@ -1090,7 +1096,7 @@ public class GameManager : MonoBehaviour
         }
         else if (points == 20 || points == 10)
         {
-            AudioManager.instance.Play("BlackOrWhitePocket" + Random.Range(1, 3));
+            AudioManager.instance.Play("BlackOrWhitePocket" + Random.Range(1, 5));
         }
         // increment points
         if (Turn)
@@ -1172,6 +1178,7 @@ public class GameManager : MonoBehaviour
     private void PieceInPocket(Collider2D pocket, Vector2 velocity, CircleCollider2D piece, SpriteRenderer pieceColourSprite, Transform pieceTransform, int pieceIndex)
     {
         // move piece to pocket center based on velocity of piece
+        isMiss = false;
         float time = Vector3.Distance(pocket.transform.position, pieceTransform.position) / velocity.magnitude;
         time *= 5f;
         time = Mathf.Clamp(time, 0.1f, 0.8f);

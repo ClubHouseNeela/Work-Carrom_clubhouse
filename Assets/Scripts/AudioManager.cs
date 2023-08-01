@@ -84,9 +84,7 @@ public class AudioManager : MonoBehaviour
         }
         if (!isPlaying.source.isPlaying)
         {
-            isPlaying.audioMixerGroup.audioMixer.SetFloat("Pitch", ((1f / pitch)));
             isPlaying.source.volume = isPlaying.volume * volumeMultiplier;
-            isPlaying.source.pitch = isPlaying.pitch * pitch;
 
             isPlaying.source.PlayDelayed(delay);
         }
