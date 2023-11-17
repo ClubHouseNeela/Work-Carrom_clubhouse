@@ -2,8 +2,8 @@
     "m_SelectedDeviceId": "RFCT40ZJFZP",
     "m_SelectedPackage": {
         "deviceId": "RFCT40ZJFZP",
-        "name": "com.clubhouse.SkatingRace",
-        "processId": 13325,
+        "name": "com.clubhouse.carrom",
+        "processId": 10073,
         "exited": false
     },
     "m_SelectedPriority": 1,
@@ -136,24 +136,6 @@
         },
         {
             "deviceId": "RFCT40ZJFZP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 5670,
-            "exited": true
-        },
-        {
-            "deviceId": "RFCT40ZJFZP",
-            "name": "com.gamejoypro.carrom",
-            "processId": 11431,
-            "exited": true
-        },
-        {
-            "deviceId": "RFCT40ZJFZP",
-            "name": "com.tmkoc.clubhouse",
-            "processId": 27124,
-            "exited": true
-        },
-        {
-            "deviceId": "RFCT40ZJFZP",
             "name": "com.clubhouse.carrom",
             "processId": 31779,
             "exited": true
@@ -162,6 +144,24 @@
             "deviceId": "RFCT40ZJFZP",
             "name": "com.clubhouse.SkatingRace",
             "processId": 13325,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.clubhouse.carrom",
+            "processId": 8872,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.clubhouse.carrom",
+            "processId": 9120,
+            "exited": true
+        },
+        {
+            "deviceId": "RFCT40ZJFZP",
+            "name": "com.clubhouse.carrom",
+            "processId": 10073,
             "exited": false
         },
         {

@@ -40,7 +40,7 @@ public class NetworkClient : SocketIOComponent
 
     public string adminURL;
     public string MatchFoundURL;
-    public string botListURL;
+    //public string botListURL;
     public BotList botList;
     public List<int> botDetailsList = new List<int>();
 
@@ -75,7 +75,7 @@ public class NetworkClient : SocketIOComponent
     public override void Start()
     {
         MatchFoundURL = adminURL + MatchFoundURL;
-        botListURL = adminURL + botListURL;
+        //botListURL = adminURL + botListURL;
         Debug.Log("android data => " +
             AndroidtoUnityJSON.instance.player_id + ", " + AndroidtoUnityJSON.instance.token + ", " + AndroidtoUnityJSON.instance.user_name + ", " +
             AndroidtoUnityJSON.instance.game_id + ", " + AndroidtoUnityJSON.instance.profile_image + ", " + AndroidtoUnityJSON.instance.game_fee + ", " +
@@ -83,34 +83,34 @@ public class NetworkClient : SocketIOComponent
             AndroidtoUnityJSON.instance.tour_mode + ", " + AndroidtoUnityJSON.instance.tour_name + ", " + AndroidtoUnityJSON.instance.no_of_attempts + ", " +
             AndroidtoUnityJSON.instance.mm_player + ", " + AndroidtoUnityJSON.instance.entry_type + ", " + AndroidtoUnityJSON.instance.multiplayer_game_mode);
 
-        WebRequestHandler.Instance.Post(botListURL, "{\"user_id\":\"" + AndroidtoUnityJSON.instance.player_id + "\"}", (response, status) =>
-        {
-            botList = JsonUtility.FromJson<BotList>(response);
+        //WebRequestHandler.Instance.Post(botListURL, "{\"user_id\":\"" + AndroidtoUnityJSON.instance.player_id + "\"}", (response, status) =>
+        //{
+        //    botList = JsonUtility.FromJson<BotList>(response);
 
-            if (botList.data == null)
-            {
-                //GameManager.instance.ExitPop.SetActive(true);
-                StartCoroutine(StartQuit(2.0f));
-                noPlayer = true;
-            }
-            else
-            {
-                for (int z = 0; z < botList.data.Length; z++)
-                {
-                    botDetailsList.Add(z);
-                }
+        //    if (botList.data == null)
+        //    {
+        //        //GameManager.instance.ExitPop.SetActive(true);
+        //        StartCoroutine(StartQuit(2.0f));
+        //        noPlayer = true;
+        //    }
+        //    else
+        //    {
+        //        for (int z = 0; z < botList.data.Length; z++)
+        //        {
+        //            botDetailsList.Add(z);
+        //        }
 
-                System.Random random = new System.Random();
-                botList.data = botList.data.OrderBy(x => random.Next()).ToArray();
+        //        System.Random random = new System.Random();
+        //        botList.data = botList.data.OrderBy(x => random.Next()).ToArray();
 
-                Debug.Log("Bot data recvd");
+        //        Debug.Log("Bot data recvd");
 
-                oppPlayerId = int.Parse(botList.data[0].id);
-                oppPlayerName = botList.data[0].first_name;
-                oppPlayerDp = botList.data[0].image;
-                noPlayer = false;
-            }
-        });
+        //        oppPlayerId = int.Parse(botList.data[0].id);
+        //        oppPlayerName = botList.data[0].first_name;
+        //        oppPlayerDp = botList.data[0].image;
+        //        noPlayer = false;
+        //    }
+        //});
 
         if (GameManager.instance.gameMode != CommonValues.GameMode.PRACTICE && GameManager.instance.gameMode != CommonValues.GameMode.LOCAL_MULTIPLAYER)
         {
@@ -452,6 +452,20 @@ public class NetworkClient : SocketIOComponent
         }
     }
 
+    public void LeaveRoom()
+    {
+        ResetPlayerPrefs();
+        json = new JSONObject(JsonUtility.ToJson
+            (
+                "{\"roomID\":\"" +
+                matchDetails.roomID +
+                "\", \"Mode\":" +
+                ((int)GameManager.instance.gameMode - 1) +
+                "}"
+            ));
+        Emit("DeleteRoom", json);
+    }
+
     public void SendEmoji(byte emojiNumber)
     {
         json = new JSONObject(emojiNumber);
@@ -639,7 +653,7 @@ public class NetworkClient : SocketIOComponent
             else
             {
                 JSONObject response = new JSONObject(updateUserHistory.downloadHandler.text);
-
+                
                 var myJsonString = (response["data"]);
                 var id = myJsonString["id"].ToString();
                 gameID = id;

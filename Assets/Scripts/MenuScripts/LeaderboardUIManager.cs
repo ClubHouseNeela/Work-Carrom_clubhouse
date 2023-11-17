@@ -22,6 +22,7 @@ public class LeaderboardUIManager : MonoBehaviour
     public Color winnerScoreColor;
     public GameObject winPanel;
     public GameObject losePanel;
+    public GameObject homeButton;
     private Vector3 winnerScoreParentPosition;
     private Vector3 loserScoreParentPosition;
 
@@ -42,16 +43,16 @@ public class LeaderboardUIManager : MonoBehaviour
         instance = this;
     }
 
-    private void Start()
-    {
-        sendDataURL = NetworkClient.instance.adminURL + sendDataURL;
-    }
-
     public void SetLeaderboardData(bool isWon)
     {
 
+        sendDataURL = NetworkClient.instance.adminURL + sendDataURL;
         var botindex = 0;
 
+        if (AndroidtoUnityJSON.instance.game_mode == "tour")
+        {
+            homeButton.GetComponentInChildren<TMP_Text>().text = "Submit";
+        }
         if (NetworkClient.instance.matchDetails.playerName[0] == AndroidtoUnityJSON.instance.user_name)
         {
             botindex = 1;

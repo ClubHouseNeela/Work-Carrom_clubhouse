@@ -4,6 +4,7 @@ using UnityEngine;
 using RTLTMPro;
 using DG.Tweening;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,10 +14,6 @@ public class GameManager : MonoBehaviour
     public static event System.Action<bool> setKinematicForPieces = delegate { };
 
     //public string serverURL = "ws://3.7.19.73:5000/socket.io/?EIO=4&transport=websocket";
-    public string sendDataURL;
-    public string matchFoundURL;
-    public string walletUpdateURL;
-    public string getTournAttemptURL;
 
 
     // Logs
@@ -119,6 +116,7 @@ public class GameManager : MonoBehaviour
     //public static GameManager instance;
     //matchmaking Variable
     [SerializeField] GameObject ReplayBtn;
+    [SerializeField] GameObject NoBotsFoundScreen;
 
     //[SerializeField] public Image blocker;
     public bool isGameOver;
@@ -131,6 +129,13 @@ public class GameManager : MonoBehaviour
     private bool pieceHasFallen = false;
 
     private bool isMiss = true;
+
+    //[Header("Game Timer")]
+    //[SerializeField] int gameTime;
+    //[SerializeField] TMP_Text gameTimerText;
+
+    private int noOfConsecutivePockets = 0;
+
     #endregion
 
     //------------------------------------------------------------------------------------------------------------------------------------------
@@ -139,10 +144,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        sendDataURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + sendDataURL;
-        matchFoundURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + matchFoundURL;
-        walletUpdateURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + walletUpdateURL;
-        getTournAttemptURL = PlayerPrefs.GetString(Constants.FETCH_ADMIN_URL, "") + getTournAttemptURL;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "free")
             gameMode = CommonValues.GameMode.FREESTYLE;
         if (AndroidtoUnityJSON.instance.multiplayer_game_mode == "pro")
@@ -314,7 +315,7 @@ public class GameManager : MonoBehaviour
 
     public int GetScore(int playerNumber)
     {
-        return int.Parse(scoreTexts[playerNumber].text.Split('/')[0]);
+        return int.Parse(scoreTexts[playerNumber].text);
     }
 
     public void SetScoreFromServer(int player1Score, int player2Score)
@@ -336,13 +337,13 @@ public class GameManager : MonoBehaviour
         {
             if (playerNumberOnline == 0)
             {
-                scoreTexts[0].text = player1Score.ToString() + "/" + maxPointsFreestyleMode.ToString();
-                scoreTexts[1].text = player2Score.ToString() + "/" + maxPointsFreestyleMode.ToString();
+                scoreTexts[0].text = player1Score.ToString();
+                scoreTexts[1].text = player2Score.ToString();
             }
             else
             {
-                scoreTexts[0].text = player2Score.ToString() + "/" + maxPointsFreestyleMode.ToString();
-                scoreTexts[1].text = player1Score.ToString() + "/" + maxPointsFreestyleMode.ToString();
+                scoreTexts[0].text = player2Score.ToString();
+                scoreTexts[1].text = player1Score.ToString();
             }
 
         }
@@ -351,6 +352,7 @@ public class GameManager : MonoBehaviour
 
     public void ChangeScore(uint playerNumber, int value)
     {
+        Debug.Log(value);
         if (gameMode == CommonValues.GameMode.BLACK_AND_WHITE)
         {
             if (value == 0)
@@ -378,13 +380,14 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("Called");
             if (value == 0)
             {
-                scoreTexts[playerNumber].text = "0/" + maxPointsFreestyleMode.ToString();
+                scoreTexts[playerNumber].text = "0";
                 return;
             }
-            int score = int.Parse(scoreTexts[playerNumber].text.Split('/')[0]) + value;
-            scoreTexts[playerNumber].text = score.ToString() + "/" + maxPointsFreestyleMode.ToString();
+            int score = int.Parse(scoreTexts[playerNumber].text) + value;
+            scoreTexts[playerNumber].text = score.ToString();
         }
     }
 
@@ -741,11 +744,49 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
+        //if (isGameOver)
+        //{
+        //    return true;
+        //}
         int p1Score = GetScore(0);
         int p2Score = GetScore(1);
-        if (gameMode != CommonValues.GameMode.BLACK_AND_WHITE)
+        //if (gameMode != CommonValues.GameMode.BLACK_AND_WHITE)
+        //{
+        //    if (p1Score >= maxPointsFreestyleMode)
+        //    {
+        //        // Game Over you win
+        //        Debug.Log("You win");
+        //        gameEndText.text = "";
+        //        gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
+        //        AudioManager.instance.Play("Win");
+        //        NetworkClient.instance.SendPlayerWin();
+        //        GameOver(true);
+        //        return true;
+        //    }
+        //    else if (p2Score >= maxPointsFreestyleMode)
+        //    {
+        //        // Game Over opponent won
+        //        Debug.Log("Opponent won");
+        //        AudioManager.instance.Play("Lose");
+        //        gameEndText.text = "";
+        //        gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
+        //        NetworkClient.instance.SendPlayerLose();
+        //        GameOver(false);
+        //        return true; ;
+        //    }
+            //else 
+        if (piecesFallen == 19)
         {
-            if (p1Score >= maxPointsFreestyleMode)
+            if (p1Score == p2Score)
+            {
+                // Game Over draw
+                AudioManager.instance.Play("Lose");
+                gameEndText.text = "DRAW";
+                NetworkClient.instance.SendPlayerDraw();
+                GameOver(false);
+                return true; ;
+            }
+            else if (p1Score > p2Score)
             {
                 // Game Over you win
                 Debug.Log("You win");
@@ -754,9 +795,9 @@ public class GameManager : MonoBehaviour
                 AudioManager.instance.Play("Win");
                 NetworkClient.instance.SendPlayerWin();
                 GameOver(true);
-                return true;
+                return true; ;
             }
-            else if (p2Score >= maxPointsFreestyleMode)
+            else
             {
                 // Game Over opponent won
                 Debug.Log("Opponent won");
@@ -765,91 +806,59 @@ public class GameManager : MonoBehaviour
                 gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
                 NetworkClient.instance.SendPlayerLose();
                 GameOver(false);
-                return true; ;
-            }
-            else if (piecesFallen == 19)
-            {
-                if (p1Score == p2Score)
-                {
-                    // Game Over draw
-                    AudioManager.instance.Play("Lose");
-                    gameEndText.text = "DRAW";
-                    NetworkClient.instance.SendPlayerDraw();
-                    GameOver(false);
-                    return true; ;
-                }
-                else if (p1Score > p2Score)
-                {
-                    // Game Over you win
-                    Debug.Log("You win");
-                    gameEndText.text = "";
-                    gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
-                    AudioManager.instance.Play("Win");
-                    NetworkClient.instance.SendPlayerWin();
-                    GameOver(true);
-                    return true; ;
-                }
-                else
-                {
-                    // Game Over opponent won
-                    Debug.Log("Opponent won");
-                    AudioManager.instance.Play("Lose");
-                    gameEndText.text = "";
-                    gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
-                    NetworkClient.instance.SendPlayerLose();
-                    GameOver(true);
-                    return true; ;
-                }
-            }
-        }
-        else
-        {
-            if (p1Score >= 9 && !queenHasFallen && Turn)
-            {
-                Debug.Log("You lose");
-                gameEndText.text = "";
-                gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
-                AudioManager.instance.Play("Lose");
-                GameOver(false);
-                return true;
-            }
-
-            if (p2Score >= 9 && !queenHasFallen)
-            {
-                Debug.Log("You win");
-                gameEndText.text = "";
-                gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
-                AudioManager.instance.Play("Win");
-                NetworkClient.instance.SendPlayerWin();
-                GameOver(true);
-                return true;
-            }
-
-            if (p1Score >= 9 || (p1Score >= 9 && !queenHasFallen && !Turn))
-            {
-                Debug.Log("You win");
-                gameEndText.text = "";
-                gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
-                AudioManager.instance.Play("Win");
-                NetworkClient.instance.SendPlayerWin();
-                GameOver(true);
-                return true;
-            }
-            else if (p2Score >= 9)
-            {
-                Debug.Log("Opponent Won");
-                AudioManager.instance.Play("Lose");
-                gameEndText.text = "";
-                gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
-                GameOver(false);
                 return true;
             }
         }
+        //}
+        //else
+        //{
+        //    if (p1Score >= 9 && !queenHasFallen && Turn)
+        //    {
+        //        Debug.Log("You lose");
+        //        gameEndText.text = "";
+        //        gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
+        //        AudioManager.instance.Play("Lose");
+        //        GameOver(false);
+        //        return true;
+        //    }
+
+        //    if (p2Score >= 9 && !queenHasFallen)
+        //    {
+        //        Debug.Log("You win");
+        //        gameEndText.text = "";
+        //        gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
+        //        AudioManager.instance.Play("Win");
+        //        NetworkClient.instance.SendPlayerWin();
+        //        GameOver(true);
+        //        return true;
+        //    }
+
+        //    if (p1Score >= 9 || (p1Score >= 9 && !queenHasFallen && !Turn))
+        //    {
+        //        Debug.Log("You win");
+        //        gameEndText.text = "";
+        //        gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[0];
+        //        AudioManager.instance.Play("Win");
+        //        NetworkClient.instance.SendPlayerWin();
+        //        GameOver(true);
+        //        return true;
+        //    }
+        //    else if (p2Score >= 9)
+        //    {
+        //        Debug.Log("Opponent Won");
+        //        AudioManager.instance.Play("Lose");
+        //        gameEndText.text = "";
+        //        gameEndText.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Result[1];
+        //        GameOver(false);
+        //        return true;
+        //    }
+        //}
         return false;
     }
 
     public void GameOver(bool isWon)
     {
+        isGameOver = true;
         gameOver = true;
         gameStarted = false;
         BotManager.instance.StopAllCoroutines();
@@ -941,6 +950,8 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
+        Debug.Log("Called");
+        noOfConsecutivePockets = 0;
         numberOfMovingPieces = 0;
         setKinematicForPieces(true);
         StrikerController.instance.DisableStriker();
@@ -1017,10 +1028,11 @@ public class GameManager : MonoBehaviour
 
     #region piece in pocket animation, penalty animation, points animation and red piece fall logic
 
-    private IEnumerator PointScoredAnimation(int points, Vector2 pocketPos, float time, int pieceIndex)
+    private IEnumerator PointScoredAnimation(int points, Vector2 pocketPos, float time, int pieceIndex, int extraPoints)
     {
         yield return new WaitForSeconds(time);
         yield return new WaitForSeconds(0.5f);
+        noOfConsecutivePockets++;
         if (points > 0)
         {
             Vector2 textPos;
@@ -1098,6 +1110,11 @@ public class GameManager : MonoBehaviour
         {
             AudioManager.instance.Play("BlackOrWhitePocket" + Random.Range(1, 5));
         }
+        points += extraPoints;
+        if (noOfConsecutivePockets > 1)
+        {
+            points = (int)(points * (noOfConsecutivePockets - 1) * 1.5f);
+        }
         // increment points
         if (Turn)
         {
@@ -1172,7 +1189,7 @@ public class GameManager : MonoBehaviour
         lastPieceFallen.rigidbody.DOMove(targetPos, 0.5f).From(lastPocketPos);
         lastFallenPieces[player] = null;
         piecesFallen--;
-        return lastPieceFallen.points;
+        return lastPieceFallen.points + 15;
     }
 
     private void PieceInPocket(Collider2D pocket, Vector2 velocity, CircleCollider2D piece, SpriteRenderer pieceColourSprite, Transform pieceTransform, int pieceIndex)
@@ -1196,6 +1213,7 @@ public class GameManager : MonoBehaviour
 
         // check if piece is striker or not
         int points;
+        int extraPoints = 0;
         if (pieceIndex > -1)
         {
             // piece is not striker
@@ -1227,14 +1245,22 @@ public class GameManager : MonoBehaviour
                     QueenFallenTextAnimation();
                     redPieceFallenWithoutAdditionalPiece = false;
                     queenHasFallen = true;
+                    if (piecesOnBoard[pieceIndex].Colour == CommonValues.Colour.BLACK)
+                    {
+                        extraPoints = 25;
+                    }
+                    else
+                    {
+                        extraPoints = 50;
+                    }
                 }
             }
-            if (points == 50)
+            else if (points == 50)
             {
                 Debug.Log("Red Piece fallen");
                 redPieceFallenWithoutAdditionalPiece = true;
             }
-            StartCoroutine(PointScoredAnimation(points, pocket.transform.position, time, pieceIndex));
+            StartCoroutine(PointScoredAnimation(points, pocket.transform.position, time, pieceIndex, extraPoints));
         }
         else
         {
@@ -1242,6 +1268,14 @@ public class GameManager : MonoBehaviour
             AudioManager.instance.Play("StrikerInPocket");
             AudioManager.instance.Play("StrickerPocket");
             strikerInPocket = true;
+            if (Turn)
+            {
+                ChangeScore(0, -5);
+            }
+            else
+            {
+                ChangeScore(1, -5);
+            }
             StartCoroutine(StrikerInPocketWaitForTurnEnd(time));
         }
     }
@@ -1504,35 +1538,15 @@ public class GameManager : MonoBehaviour
         Application.logMessageReceived -= LogCallback;
     }
 
-    public void DeductWallet()
-    {
-
-
-        walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
-        //  GlobalWalletBalance += int.Parse(AndroidtoUnityJSON.instance.game_fee);
-
-        //else//-
-        //{
-        //    walletUpdate.amount = AndroidtoUnityJSON.instance.game_fee;
-        //    GlobalWalletBalance += int.Parse(AndroidtoUnityJSON.instance.game_fee);
-        //}
-
-        walletUpdate.user_id = AndroidtoUnityJSON.instance.player_id;
-        walletUpdate.game_id = AndroidtoUnityJSON.instance.game_id;
-        walletUpdate.type = AndroidtoUnityJSON.instance.game_mode;
-
-        string mydata = JsonUtility.ToJson(walletUpdate);
-        WebRequestHandler.Instance.Post(walletUpdateURL, mydata, (response, status) =>
-        {
-            Debug.Log(response + " sent wallet update");
-        });
-
-        //check balance
-        //WebRequestHandler.Instance.Post(walletInfoURL, walletInfoData, (response, status) =>
-        //{
-        //    WalletInfo walletInfoResponse = JsonUtility.FromJson<WalletInfo>(response);
-        //    GlobalWalletBalance = int.Parse(walletInfoResponse.data.cash_balance);
-        //    Debug.Log(GlobalWalletBalance + " <= updated balance");
-        //});
+    public void TimeOver()
+    { 
+        NetworkClient.instance.LeaveRoom();
+        NoBotsFoundScreen.SetActive(true);
     }
+
+    public void Retry(string sceneName)
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+    }
+
 }

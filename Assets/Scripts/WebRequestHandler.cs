@@ -19,7 +19,6 @@ public class WebRequestHandler : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(this);
     }
 
     public void Get(string url, Action<string, bool> OnRequestProcessed)
